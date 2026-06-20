@@ -9,6 +9,18 @@ data.
 > generate those demos from source JSON live in a separate upstream repo and are not yet
 > checked in here — see [docs/known-issues.md](docs/known-issues.md).
 
+## Screenshots
+
+The 3D mind map — 465 backbone nodes across 86 domains — with the control panel (search,
+**Radial / Top-down / Free** layouts, label toggles, and clickable domain chips):
+
+![3D mind map of the concept tree, showing a colorful force-directed graph beside the control panel](tree-example-screen.png)
+
+**Focus mode** — clicking a node isolates its linked neighbors and opens the details panel
+with the concept's description, domain, source count, and expandable sub-concepts:
+
+![Focus mode: a single node isolated with its neighbors and the details panel open on the right](node-details-screen.png)
+
 ## Quick start
 
 Everything renders client-side and offline — no server, no install, no network.

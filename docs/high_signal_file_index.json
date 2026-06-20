@@ -24,6 +24,18 @@
       "summary": "Project overview, quick start, demo index, links to docs."
     },
     {
+      "path": "tree-example-screen.png",
+      "role": "image",
+      "signal": "low",
+      "summary": "Screenshot of the 3D mind map with the control panel; embedded in README."
+    },
+    {
+      "path": "node-details-screen.png",
+      "role": "image",
+      "signal": "low",
+      "summary": "Screenshot of focus mode with the node details panel; embedded in README."
+    },
+    {
       "path": "CLAUDE.md",
       "role": "agent-guidance",
       "signal": "high",

@@ -11,6 +11,8 @@ _Snapshot: 2026-06-20. Human-readable file map. If the tree has drifted, this an
 | `d3.v7.min.js` | vendored lib (~280 KB) | D3 v7; powers the 2D page. Opaque. |
 | `README.md` | doc | Project entry point, quick start, demo index. |
 | `LICENSE` | legal | Project license. |
+| `tree-example-screen.png` | image | Screenshot: the 3D mind map + control panel (used in README). |
+| `node-details-screen.png` | image | Screenshot: focus mode with the node details panel (used in README). |
 | `CLAUDE.md` / `GEMINI.md` / `.github/copilot-instructions.md` | agent guidance | Rules for AI coding agents (don't hand-edit generated files, no invented build). |
 | `AGENTS.md` | catalog | Repo-local agents (none yet). |
 | `CONTRIBUTING.md` / `CODE_OF_CONDUCT.md` | docs | Contribution + conduct policy. |
