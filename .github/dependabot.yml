@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # Keep GitHub Actions in the CI workflow up to date.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+
+  # NOTE: there is no package manifest (package.json) in this repo today, so no
+  # npm/pip ecosystem is configured. The rendering libraries
+  # (concept-tree-3d.bundle.js, d3.v7.min.js) are vendored as built files and are
+  # NOT managed by Dependabot — update them manually from upstream releases.
+  # If a package.json is added later, add an `npm` ecosystem block here.
