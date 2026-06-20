@@ -73,6 +73,19 @@ relocated:
 If any of these removals were unintentional, restore from git history
 (`git checkout HEAD -- README.md` for the old root README) or regenerate.
 
+## 7. Demos duplicated at root and under `examples/` — **intentional (documented)**
+
+The demo pages exist in **two** locations by choice:
+
+- **Repo root** — `concept-tree-3d.html`, `concept-tree.html`, `skills-graph.html`,
+  `skills-graph-full.html` (+ `skills-graph*.json`). These sit beside the libraries and use
+  **bare** `src=` paths (`concept-tree-3d.bundle.js` / `d3.v7.min.js`).
+- **`examples/`** — the same pages with `../` paths (libraries are one level up).
+
+The `.json` data files are byte-identical between the two locations. Trade-off: ~2 MB of
+duplicated content in history, and any regeneration must update **both** copies. If this
+duplication stops being useful, collapse to one location and update the docs + this note.
+
 ## 6. Large binaries in the repo — **watch**
 
 `concept-tree-3d.bundle.js` (~1.6 MB) and the demo JSON/HTML are sizable. If history growth

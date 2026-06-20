@@ -19,13 +19,16 @@ than opening `file://` URLs:
 ```sh
 # from the repo root
 python3 -m http.server 8000
-#   → http://localhost:8000/examples/concept-tree-3d.html
-#   → http://localhost:8000/examples/concept-tree.html
-#   → http://localhost:8000/examples/skills-graph.html
+#   root copies (bare paths):  http://localhost:8000/concept-tree-3d.html
+#   examples/ copies (../):    http://localhost:8000/examples/concept-tree-3d.html
+#   also: concept-tree.html, skills-graph.html, skills-graph-full.html (both locations)
 
 # or, with Node installed:
 npx --yes serve .
 ```
+
+> The demos exist at both the repo **root** (bare library paths) and under `examples/` (`../`
+> paths). Either works when served from the root. See [known-issues.md](known-issues.md#7).
 
 > ℹ️ The demo pages load their library from the repo root via a `../` relative path
 > (`../concept-tree-3d.bundle.js` / `../d3.v7.min.js`), fixed 2026-06-20. Serve from the repo

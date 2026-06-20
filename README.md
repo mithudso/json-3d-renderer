@@ -9,6 +9,18 @@ data.
 > generate those demos from source JSON live in a separate upstream repo and are not yet
 > checked in here — see [docs/known-issues.md](docs/known-issues.md).
 
+## Screenshots
+
+The 3D mind map — 465 backbone nodes across 86 domains — with the control panel (search,
+**Radial / Top-down / Free** layouts, label toggles, and clickable domain chips):
+
+![3D mind map of the concept tree, showing a colorful force-directed graph beside the control panel](tree-example-screen.png)
+
+**Focus mode** — clicking a node isolates its linked neighbors and opens the details panel
+with the concept's description, domain, source count, and expandable sub-concepts:
+
+![Focus mode: a single node isolated with its neighbors and the details panel open on the right](node-details-screen.png)
+
 ## Quick start
 
 Everything renders client-side and offline — no server, no install, no network.
@@ -42,6 +54,10 @@ The sample input data is [`examples/tree.json`](examples/tree.json) (concept-tre
 [`examples/skills-graph.json`](examples/skills-graph.json) (graph shape). Each HTML demo also
 **inlines** its own data as a `const DATA = {...}` literal, so a single `.html` file is
 self-contained except for the rendering library.
+
+> The same demos are also kept at the **repo root** (`concept-tree-3d.html`, etc.), where they
+> load the library by a bare sibling path. Opening a root copy directly works without `../`.
+> See [docs/known-issues.md](docs/known-issues.md#7) for why both locations exist.
 
 ## How it works (one paragraph)
 
