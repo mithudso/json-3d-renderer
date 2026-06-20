@@ -43,6 +43,10 @@ The sample input data is [`examples/tree.json`](examples/tree.json) (concept-tre
 **inlines** its own data as a `const DATA = {...}` literal, so a single `.html` file is
 self-contained except for the rendering library.
 
+> The same demos are also kept at the **repo root** (`concept-tree-3d.html`, etc.), where they
+> load the library by a bare sibling path. Opening a root copy directly works without `../`.
+> See [docs/known-issues.md](docs/known-issues.md#7) for why both locations exist.
+
 ## How it works (one paragraph)
 
 A generator reads a hierarchical JSON file (concept → parent/children, with metadata),

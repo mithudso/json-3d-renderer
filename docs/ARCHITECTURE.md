@@ -30,9 +30,9 @@ page** that renders a graph entirely in the browser.
 
 | Component | File(s) | Responsibility |
 |---|---|---|
-| **3D renderer page** | `examples/concept-tree-3d.html` | Inlines a `{nodes, links}` graph; builds an interactive 3D force-directed mind map (search, layout modes, focus/isolate, details panel). |
-| **2D renderer page** | `examples/concept-tree.html` | Inlines the same data; renders radial tree / treemap / charts with D3. |
-| **Skills-graph pages** | `examples/skills-graph.html`, `examples/skills-graph-full.html` | Node-link graph of skills and relationships, rendered with the 3D bundle. |
+| **3D renderer page** | `concept-tree-3d.html` (root) + `examples/concept-tree-3d.html` | Inlines a `{nodes, links}` graph; builds an interactive 3D force-directed mind map (search, layout modes, focus/isolate, details panel). |
+| **2D renderer page** | `concept-tree.html` (root) + `examples/concept-tree.html` | Inlines the same data; renders radial tree / treemap / charts with D3. |
+| **Skills-graph pages** | `skills-graph.html`, `skills-graph-full.html` (root + `examples/`) | Node-link graph of skills and relationships, rendered with the 3D bundle. |
 | **3D rendering library** | `concept-tree-3d.bundle.js` (root) | Vendored build of three.js + 3d-force-graph. Opaque; ~1.6 MB. |
 | **2D rendering library** | `d3.v7.min.js` (root) | Vendored D3 v7. Opaque; ~280 KB. |
 | **Sample data** | `examples/tree.json`, `examples/skills-graph.json` | Source-shape JSON (also inlined into the pages). |
@@ -59,6 +59,10 @@ documented in [COMPONENTS.md](COMPONENTS.md).
   the library sitting at a resolvable relative path. The pages reference it as
   `../<library>` from `examples/` (fixed 2026-06-20); because they're generated, that fix
   must also land upstream — see [known-issues.md](known-issues.md).
+- **ADR-001b — Demos kept in two locations.** The pages exist both at the repo root (bare
+  sibling library paths) and under `examples/` (`../` paths). *Consequence:* ~2 MB of
+  duplicated content and a regeneration must touch both copies — see
+  [known-issues.md](known-issues.md#7).
 - **ADR-002 — Two rendering stacks for one dataset.** 3D (3d-force-graph/three.js) for
   exploration; 2D (D3) and Markdown/Mermaid for static/printable views. *Consequence:* the
   same tree is represented in several artifacts whose node counts differ by design (they

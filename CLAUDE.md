@@ -38,21 +38,25 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and
 /
 ├── concept-tree-3d.bundle.js   # rendering library: three.js + 3d-force-graph (built bundle)
 ├── d3.v7.min.js                # rendering library: D3 v7 (2D radial / treemap / charts)
+├── concept-tree-3d.html        # 3D mind map  (root copy; bare path: concept-tree-3d.bundle.js)
+├── concept-tree.html           # 2D viz       (root copy; bare path: d3.v7.min.js)
+├── skills-graph[-full].html    # root copies of the skills graph (bare paths)
+├── skills-graph[-full].json    # data (identical to examples/ copies)
 ├── README.md · LICENSE
 ├── docs/                       # this documentation suite
-└── examples/                   # demo pages, their inlined data, and generated companions
+└── examples/                   # the SAME demos with ../ paths, plus data + generated companions
     ├── concept-tree-3d.html    # 3D mind map  (loads ../concept-tree-3d.bundle.js)
     ├── concept-tree.html       # 2D viz       (loads ../d3.v7.min.js)
-    ├── skills-graph[-full].html
-    ├── skills-graph[-full].json
+    ├── skills-graph[-full].html · skills-graph[-full].json
     ├── tree.json               # sample source data (array of concept nodes)
     ├── concept-tree.md · tree.md · tree-mindmap.md   # generated Markdown / Mermaid
     └── README.md
 ```
 
-> The `examples/*.html` pages load their library from the root via `../` (fixed 2026-06-20).
-> Because they're generated files, the same fix must land upstream or it regresses — see
-> [docs/known-issues.md](docs/known-issues.md).
+> The demos are kept in **two** locations (intentional — see
+> [docs/known-issues.md](docs/known-issues.md#7)): root copies use bare sibling paths;
+> `examples/` copies use `../`. All are generated files, so any path change must land
+> upstream and be applied to both copies or it regresses on regeneration.
 
 ## Workflow log rule
 

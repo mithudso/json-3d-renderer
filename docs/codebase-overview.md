@@ -17,6 +17,19 @@ _Snapshot: 2026-06-20. Human-readable file map. If the tree has drifted, this an
 | `memory.md` / `prompts.md` | operator logs | Work log + request log. |
 | `.editorconfig` / `.gitignore` / `.gitattributes` | config | Editor + VCS hygiene; protects vendored/generated files. |
 
+### Root demo copies (also present under `examples/`)
+
+The demos are intentionally kept in **two** locations (see [known-issues.md](known-issues.md#7)).
+The root copies sit beside the libraries and use **bare** `src=` paths; the `examples/`
+copies use `../`.
+
+| File | Kind | Notes |
+|---|---|---|
+| `concept-tree-3d.html` | demo (generated) | 3D mind map; loads `concept-tree-3d.bundle.js` (sibling, bare path). |
+| `concept-tree.html` | demo (generated) | 2D viz; loads `d3.v7.min.js` (sibling, bare path). |
+| `skills-graph.html` · `skills-graph-full.html` | demo (generated) | Skills graph; loads the 3D bundle (sibling). |
+| `skills-graph.json` · `skills-graph-full.json` | data | Byte-identical to the `examples/` copies. |
+
 ## `.github/` — CI & repo automation
 
 | File | Purpose |

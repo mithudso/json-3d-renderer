@@ -102,6 +102,44 @@
       "summary": "Human-readable file-by-file map."
     },
     {
+      "path": "concept-tree-3d.html",
+      "role": "demo-generated",
+      "generator": "scripts/build-concept-tree-3d.py (upstream, not in repo)",
+      "signal": "high",
+      "summary": "Root copy of the 3D mind map. Same as examples/concept-tree-3d.html but loads concept-tree-3d.bundle.js by a bare sibling path. Duplicated by design — see docs/known-issues.md #7."
+    },
+    {
+      "path": "concept-tree.html",
+      "role": "demo-generated",
+      "generator": "scripts/build-concept-tree-viz.mjs (upstream, not in repo)",
+      "signal": "medium",
+      "summary": "Root copy of the 2D viz; loads d3.v7.min.js by a bare sibling path. Duplicate of examples/concept-tree.html."
+    },
+    {
+      "path": "skills-graph.html",
+      "role": "demo-generated",
+      "signal": "medium",
+      "summary": "Root copy of the skills graph; loads the 3D bundle by a bare sibling path. Duplicate of examples/skills-graph.html."
+    },
+    {
+      "path": "skills-graph-full.html",
+      "role": "demo-generated",
+      "signal": "low",
+      "summary": "Root copy of the larger skills graph variant. Duplicate of examples/skills-graph-full.html."
+    },
+    {
+      "path": "skills-graph.json",
+      "role": "data",
+      "signal": "medium",
+      "summary": "Graph data (231 nodes / 800 links). Byte-identical to examples/skills-graph.json."
+    },
+    {
+      "path": "skills-graph-full.json",
+      "role": "data",
+      "signal": "low",
+      "summary": "Larger skills-graph data variant. Byte-identical to examples/skills-graph-full.json."
+    },
+    {
       "path": "examples/concept-tree-3d.html",
       "role": "demo-generated",
       "generator": "scripts/build-concept-tree-3d.py (upstream, not in repo)",
