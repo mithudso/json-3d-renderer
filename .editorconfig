@@ -1,0 +1,33 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false  # trailing spaces are significant for hard line breaks
+
+[*.{mmd}]
+trim_trailing_whitespace = false
+
+# Vendored / generated — do not let editors reformat these
+[concept-tree-3d.bundle.js]
+indent_size = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+
+[d3.v7.min.js]
+indent_size = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+
+[examples/*.html]
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+
+[examples/*.json]
+indent_size = unset

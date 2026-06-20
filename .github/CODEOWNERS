@@ -1,0 +1,14 @@
+# Code owners for json-3d-renderer
+# Each line maps a path pattern to its reviewer(s). Replace @owner with the
+# actual GitHub handle(s) before relying on auto-assignment.
+
+# Default owner for everything in the repo
+*           @owner
+
+# Documentation
+/docs/      @owner
+/README.md  @owner
+
+# Vendored rendering libraries — review carefully on any update
+/concept-tree-3d.bundle.js  @owner
+/d3.v7.min.js               @owner

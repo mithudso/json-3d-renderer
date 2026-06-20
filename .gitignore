@@ -1,0 +1,33 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+*.code-workspace
+
+# Node (if a build is ever added)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python (if generators are vendored in)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Logs / temp
+*.log
+.cache/
+tmp/
+
+# Local env
+.env
+.env.local
+
+# NOTE: the generated visualization artifacts (examples/*.html, examples/*.json,
+# examples/*.md) and the vendored rendering libraries (concept-tree-3d.bundle.js,
+# d3.v7.min.js) are INTENTIONALLY tracked — do not add them here. See
+# docs/known-issues.md for the Git-LFS consideration.

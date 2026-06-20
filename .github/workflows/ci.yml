@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Minimal CI for a static-artifact repo: validate that every tracked JSON file
+# parses. There is no build or test suite to run today (see docs/DEVELOPMENT.md).
+jobs:
+  validate-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate all JSON files parse
+        run: |
+          set -euo pipefail
+          fail=0
+          # All tracked .json files except those under node_modules / .git.
+          while IFS= read -r f; do
+            if ! node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "$f" 2>/dev/null; then
+              echo "::error file=$f::invalid JSON"
+              fail=1
+            else
+              echo "ok: $f"
+            fi
+          done < <(git ls-files '*.json')
+          exit $fail

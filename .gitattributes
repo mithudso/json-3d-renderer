@@ -1,0 +1,20 @@
+# Normalize line endings for text files
+* text=auto eol=lf
+
+# Binary
+*.png binary
+
+# Vendored / generated assets — mark for GitHub language stats and collapse in diffs.
+concept-tree-3d.bundle.js linguist-vendored linguist-generated -diff
+d3.v7.min.js               linguist-vendored linguist-generated -diff
+
+# Generated visualization artifacts — keep them out of language stats and large diffs.
+examples/*.html        linguist-generated
+examples/*.json        linguist-generated -diff
+*.mmd                  linguist-generated
+concept-tree.md        linguist-generated
+tree.md                linguist-generated
+tree-mindmap.md        linguist-generated
+
+# If/when these grow unwieldy, consider Git LFS (see docs/known-issues.md):
+# *.bundle.js filter=lfs diff=lfs merge=lfs -text
