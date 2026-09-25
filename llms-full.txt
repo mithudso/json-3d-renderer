@@ -1,0 +1,650 @@
+<!-- Generated 2026-09-25 [gen: p/1.1.0]; verified-as-of 2026-09-25 -->
+
+# json-3d-renderer
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/README.md
+
+## json-3d-renderer
+
+Converts mind-map-style JSON into an interactive **3D mind-map visualization** with focus
+mode and per-node descriptions — plus 2D (D3) and Markdown/Mermaid renderings of the same
+data.
+
+> **Status:** early. This repo currently ships the rendering **libraries** and a set of
+> **generated demo visualizations** under [`examples/`](examples/). The build scripts that
+> generate those demos from source JSON live in a separate upstream repo and are not yet
+> checked in here — see [docs/known-issues.md](docs/known-issues.md).
+
+### Screenshots
+
+The 3D mind map — 465 backbone nodes across 86 domains — with the control panel (search,
+**Radial / Top-down / Free** layouts, label toggles, and clickable domain chips):
+
+![3D mind map of the concept tree, showing a colorful force-directed graph beside the control panel](tree-example-screen.png)
+
+**Focus mode** — clicking a node isolates its linked neighbors and opens the details panel
+with the concept's description, domain, source count, and expandable sub-concepts:
+
+![Focus mode: a single node isolated with its neighbors and the details panel open on the right](node-details-screen.png)
+
+### Quick start
+
+Everything renders client-side and offline — no server, no install, no network.
+
+1. Clone the repo.
+2. Open a demo. Because the demos load a rendering library from the repo root, open them
+   through a tiny local web server rather than `file://` so relative paths resolve cleanly:
+
+   ```sh
+   # from the repo root
+   python3 -m http.server 8000
+   # then visit, e.g.:
+   #   http://localhost:8000/examples/concept-tree-3d.html
+   ```
+
+   The demo pages load their rendering library from the repo root via a `../` relative path
+   (`../concept-tree-3d.bundle.js` / `../d3.v7.min.js`), so serving from the repo root and
+   opening the page under `examples/` works. (Note: these are generated files — see
+   [docs/known-issues.md](docs/known-issues.md) for why the `../` fix must also land upstream.)
+
+### The demos
+
+| File | What it is | Renders with |
+|---|---|---|
+| [`examples/concept-tree-3d.html`](examples/concept-tree-3d.html) | 3D force-directed mind map — rotate/zoom, search, layout modes, click a node to isolate its neighbors and read its description | `concept-tree-3d.bundle.js` (three.js + 3d-force-graph) |
+| [`examples/concept-tree.html`](examples/concept-tree.html) | 2D radial tree / treemap / charts of the same data | `d3.v7.min.js` |
+| [`examples/skills-graph.html`](examples/skills-graph.html) · [`-full`](examples/skills-graph-full.html) | Node-link graph of skills and their relationships | `concept-tree-3d.bundle.js` |
+| [`examples/concept-tree.md`](examples/concept-tree.md) · [`tree.md`](examples/tree.md) · [`tree-mindmap.md`](examples/tree-mindmap.md) | Static Markdown / Mermaid renderings | — |
+
+The sample input data is [`examples/tree.json`](examples/tree.json) (concept-tree shape) and
+[`examples/skills-graph.json`](examples/skills-graph.json) (graph shape). Each HTML demo also
+**inlines** its own data as a `const DATA = {...}` literal, so a single `.html` file is
+self-contained except for the rendering library.
+
+> The same demos are also kept at the **repo root** (`concept-tree-3d.html`, etc.), where they
+> load the library by a bare sibling path. Opening a root copy directly works without `../`.
+> See [docs/known-issues.md](docs/known-issues.md#7) for why both locations exist.
+
+### How it works (one paragraph)
+
+A generator reads a hierarchical JSON file (concept → parent/children, with metadata),
+transforms it into a `{ nodes, links }` graph, and emits a self-contained HTML page with that
+graph inlined and a `<script>` tag pointing at a rendering library. The 3D page uses
+3d-force-graph (three.js under the hood); the 2D page uses D3 v7. See
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and the data schemas in
+[docs/COMPONENTS.md](docs/COMPONENTS.md).
+
+### Documentation
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — how the pieces fit, data flow, decisions
+- [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) — running the demos, regenerating, troubleshooting
+- [docs/COMPONENTS.md](docs/COMPONENTS.md) — the renderers and the data schemas
+- [docs/codebase-overview.md](docs/codebase-overview.md) — file-by-file map
+- [docs/known-issues.md](docs/known-issues.md) — active gaps and workarounds
+- [CONTRIBUTING.md](CONTRIBUTING.md) · [CLAUDE.md](CLAUDE.md) (AI-agent guidance)
+
+### License
+
+See [LICENSE](LICENSE).
+
+# Semantic Indexing Rule
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/CLAUDE.md
+
+## Semantic Indexing Rule
+- Do NOT use `view_file` to blindly explore large files.
+- ALWAYS use the `search_codebase` MCP tool (local semantic index) first to pull semantic chunks.
+- If the index does not exist, build it using `scripts/semantic_indexer.py`.
+- If the MCP server is not running or fails, attempt to start it. If it still fails, only then fallback to `view_file`.
+
+## CLAUDE.md — json-3d-renderer
+
+Guidance for Claude Code (and other AI coding agents) working in this repository.
+
+### Default Execution Strategy
+
+- **Read before you write.** This repo is mostly *generated output* (HTML/JSON/Markdown
+  visualizations) plus *vendored rendering libraries*. Confirm whether a file is
+  hand-authored or machine-generated before editing — generated files carry a
+  `GENERATED by …` banner on the first line and must not be hand-edited.
+- **Never hand-edit generated artifacts.** Files with a `GENERATED by scripts/…` header
+  are produced by build scripts that live in a *separate* upstream repo (see
+  [docs/known-issues.md](docs/known-issues.md)). Editing them by hand will be lost on the
+  next regeneration. Fix the upstream generator instead, or record the need as a TODO.
+- **Do not invent commands, paths, env vars, or build steps.** There is no `package.json`,
+  no build system, and no test suite checked into this repo today. If you need one, propose
+  it explicitly — do not document a phantom workflow.
+- **Keep large vendored files out of diffs.** `concept-tree-3d.bundle.js` (~1.6 MB) and
+  `d3.v7.min.js` (~280 KB) are vendored builds. Treat them as opaque; do not reformat or
+  re-minify them.
+
+### What this repo is
+
+A **JSON → 3D mind-map renderer** and a set of demo visualizations built with it. The
+intent (per `README.md`) is to convert mind-map-style JSON into an interactive 3D map with
+focus mode and node descriptions. Today the repo ships:
+
+- The rendering libraries (`concept-tree-3d.bundle.js`, `d3.v7.min.js`) at the repo root.
+- Self-contained demo pages under `examples/` (each inlines its data as `const DATA`).
+- Generated Markdown / Mermaid companions under `examples/`.
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and
+[docs/codebase-overview.md](docs/codebase-overview.md) for the full map.
+
+### Repository layout (snapshot)
+
+```
+/
+├── concept-tree-3d.bundle.js   # rendering library: three.js + 3d-force-graph (built bundle)
+├── d3.v7.min.js                # rendering library: D3 v7 (2D radial / treemap / charts)
+├── concept-tree-3d.html        # 3D mind map  (root copy; bare path: concept-tree-3d.bundle.js)
+├── concept-tree.html           # 2D viz       (root copy; bare path: d3.v7.min.js)
+├── skills-graph[-full].html    # root copies of the skills graph (bare paths)
+├── skills-graph[-full].json    # data (identical to examples/ copies)
+├── README.md · LICENSE
+├── docs/                       # this documentation suite
+└── examples/                   # the SAME demos with ../ paths, plus data + generated companions
+    ├── concept-tree-3d.html    # 3D mind map  (loads ../concept-tree-3d.bundle.js)
+    ├── concept-tree.html       # 2D viz       (loads ../d3.v7.min.js)
+    ├── skills-graph[-full].html · skills-graph[-full].json
+    ├── tree.json               # sample source data (array of concept nodes)
+    ├── concept-tree.md · tree.md · tree-mindmap.md   # generated Markdown / Mermaid
+    └── README.md
+```
+
+> The demos are kept in **two** locations (intentional — see
+> [docs/known-issues.md](docs/known-issues.md#7)): root copies use bare sibling paths;
+> `examples/` copies use `../`. All are generated files, so any path change must land
+> upstream and be applied to both copies or it regresses on regeneration.
+
+### Workflow log rule
+
+When you complete a unit of work in this repo, append a short entry to
+[`memory.md`](memory.md) (what changed, why, next steps) and record the originating user
+request in [`prompts.md`](prompts.md). Keep entries terse and in chronological order.
+
+### Conventions
+
+- ASCII by default; match the surrounding style of any file you touch.
+- Markdown: ATX headings, fenced code blocks with language tags, reference real paths only.
+- Data schemas are documented in [docs/COMPONENTS.md](docs/COMPONENTS.md) — keep them in
+  sync if the JSON shape changes.
+
+### Related agent instruction files
+
+- [`AGENTS.md`](AGENTS.md) — repo-local agent catalog (currently none).
+- [`GEMINI.md`](GEMINI.md) — Gemini CLI notes.
+- `.github/copilot-instructions.md` — Copilot CLI rules (mirror of this file's strategy).
+
+# AGENTS.md — json-3d-renderer
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/AGENTS.md
+
+## AGENTS.md — json-3d-renderer
+
+Catalog of repository-local agents (custom subagents, automations) defined for this repo.
+
+### Repo-local agents
+
+_None defined yet._
+
+This repository currently ships no custom agents, hooks, or automation harnesses. It is a
+small collection of generated visualization artifacts and vendored rendering libraries; the
+work that *produces* those artifacts lives in a separate upstream repo (see
+[docs/known-issues.md](docs/known-issues.md)).
+
+If repo-local agents are added later, document each one here using this format:
+
+| Agent | Scope | When to use | Tools |
+|---|---|---|---|
+| _name_ | _what it operates on_ | _trigger conditions_ | _allowed tools_ |
+
+### General guidance for any agent working here
+
+- Follow the rules in [CLAUDE.md](CLAUDE.md) — especially: do not hand-edit `GENERATED by …`
+  files, and do not invent build/test commands that don't exist in this repo.
+- Log completed work to [memory.md](memory.md) and the originating request to
+  [prompts.md](prompts.md).
+
+# Architecture
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/ARCHITECTURE.md
+
+## Architecture
+
+_Snapshot: 2026-06-20. This repo was being reorganized when these docs were written; if the
+layout has drifted, reconcile against `docs/codebase-overview.md`._
+
+### System context
+
+`json-3d-renderer` is a **client-side, offline** visualization project. There is no server,
+no backend, and no runtime network access. The unit of delivery is a **self-contained HTML
+page** that renders a graph entirely in the browser.
+
+```
+  ┌──────────────────┐     generator (upstream,        ┌─────────────────────────────┐
+  │  source JSON      │     NOT in this repo —          │  examples/<name>.html        │
+  │  (concept tree /  │ ──▶ scripts/build-*.py|.mjs ──▶ │  • data inlined as           │
+  │   skills graph)   │                                 │    `const DATA = {nodes,links}` │
+  └──────────────────┘                                 │  • <script src="…library">    │
+                                                        └──────────────┬──────────────┘
+                                                                       │ opened in a browser
+                                                                       ▼
+                                  ┌────────────────────────────────────────────────────┐
+                                  │ rendering library (in repo root):                  │
+                                  │  • concept-tree-3d.bundle.js  → three.js +          │
+                                  │                                 3d-force-graph (3D) │
+                                  │  • d3.v7.min.js               → D3 v7 (2D)          │
+                                  └────────────────────────────────────────────────────┘
+```
+
+### Containers / components
+
+| Component | File(s) | Responsibility |
+|---|---|---|
+| **3D renderer page** | `concept-tree-3d.html` (root) + `examples/concept-tree-3d.html` | Inlines a `{nodes, links}` graph; builds an interactive 3D force-directed mind map (search, layout modes, focus/isolate, details panel). |
+| **2D renderer page** | `concept-tree.html` (root) + `examples/concept-tree.html` | Inlines the same data; renders radial tree / treemap / charts with D3. |
+| **Skills-graph pages** | `skills-graph.html`, `skills-graph-full.html` (root + `examples/`) | Node-link graph of skills and relationships, rendered with the 3D bundle. |
+| **3D rendering library** | `concept-tree-3d.bundle.js` (root) | Vendored build of three.js + 3d-force-graph. Opaque; ~1.6 MB. |
+| **2D rendering library** | `d3.v7.min.js` (root) | Vendored D3 v7. Opaque; ~280 KB. |
+| **Sample data** | `examples/tree.json`, `examples/skills-graph.json` | Source-shape JSON (also inlined into the pages). |
+| **Static renderings** | `examples/concept-tree.md`, `examples/tree.md`, `examples/tree-mindmap.md` | Generated Markdown / Mermaid views of the same tree. |
+
+### Data flow
+
+1. A hierarchical **source JSON** describes concepts (or skills) with parent/child links and
+   metadata (`skillId`, `researchedAt`, `sourcesCount`, descriptions).
+2. An **upstream generator** transforms that tree into a flat `{ nodes, links }` graph and
+   emits an HTML page with the graph **inlined** as `const DATA` and a `<script>` tag for the
+   right library.
+3. The browser loads the page, the library reads `DATA`, and renders the interactive view.
+
+The generator scripts and the canonical source data are **not in this repo** today (see
+[known-issues.md](known-issues.md)); what is checked in is the *output* of step 2 plus the
+libraries from step 3. The schemas for both the source JSON and the inlined `DATA` graph are
+documented in [COMPONENTS.md](COMPONENTS.md).
+
+### Key architectural decisions
+
+- **ADR-001 — Inline data, vendor the library.** Each page carries its own data and loads a
+  shared library file. *Consequence:* a page is portable as a single file, but it depends on
+  the library sitting at a resolvable relative path. The pages reference it as
+  `../<library>` from `examples/` (fixed 2026-06-20); because they're generated, that fix
+  must also land upstream — see [known-issues.md](known-issues.md).
+- **ADR-001b — Demos kept in two locations.** The pages exist both at the repo root (bare
+  sibling library paths) and under `examples/` (`../` paths). *Consequence:* ~2 MB of
+  duplicated content and a regeneration must touch both copies — see
+  [known-issues.md](known-issues.md#7).
+- **ADR-002 — Two rendering stacks for one dataset.** 3D (3d-force-graph/three.js) for
+  exploration; 2D (D3) and Markdown/Mermaid for static/printable views. *Consequence:* the
+  same tree is represented in several artifacts whose node counts differ by design (they
+  count different slices — see [known-issues.md](known-issues.md)).
+- **ADR-003 — Offline-first, no server.** No build/runtime dependencies at view time.
+  *Consequence:* opening via `file://` can hit browser path/security quirks; a tiny static
+  server is the recommended way to view (see [DEVELOPMENT.md](DEVELOPMENT.md)).
+
+# Components & data schemas
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/COMPONENTS.md
+
+## Components & data schemas
+
+_Snapshot: 2026-06-20. Schemas below are derived from the actual files in the repo._
+
+### Rendering libraries (repo root)
+
+| Library | File | Stack | Used by |
+|---|---|---|---|
+| 3D force-directed graph | `concept-tree-3d.bundle.js` (~1.6 MB) | three.js + 3d-force-graph (`ForceGraph3D`) | `examples/concept-tree-3d.html`, `examples/skills-graph*.html` |
+| 2D dataviz | `d3.v7.min.js` (~280 KB) | D3 v7 | `examples/concept-tree.html` |
+
+Both are **vendored builds** — opaque, do not reformat. Update only from official upstream
+releases.
+
+### Pages (`examples/`)
+
+#### `concept-tree-3d.html` — 3D mind map
+- Generated by `scripts/build-concept-tree-3d.py` (upstream; not in repo).
+- Inlines data as `const DATA = { nodes: [...], links: [...] }`.
+- Panel subtitle reports: **465 backbone nodes · 86 domains · 454 concepts · 3404
+  expandable leaves**.
+- Controls: search box; layout modes **Radial** (`data-mode="radialout"`), **Tree/top-down**
+  (`data-mode="td"`), **Free/force** (`data-mode="null"`); clickable domain chips; node count
+  readout; a details panel showing a node's description, source count, and child links;
+  click-to-isolate (focus mode) on a node's linked neighbors.
+
+#### `concept-tree.html` — 2D views
+- Generated by `scripts/build-concept-tree-viz.mjs` (upstream; not in repo).
+- Loads `d3.v7.min.js`; renders radial tree / treemap / charts.
+
+#### `skills-graph.html` / `skills-graph-full.html` — skills graph
+- Node-link graph rendered with the 3D bundle.
+- Data: `examples/skills-graph.json` (231 nodes, 800 links) and the larger
+  `skills-graph-full.json`.
+
+#### Static renderings
+- `examples/concept-tree.md`, `examples/tree.md` — hierarchical Markdown.
+- `examples/tree-mindmap.md` — Mermaid `mindmap` (generated by
+  `scripts/build-concept-tree-mindmap.py`, upstream).
+
+### Data schemas
+
+#### Source-tree shape — `examples/tree.json`
+
+A JSON **array** of concept nodes:
+
+```jsonc
+{
+  "concept":        "A2A Protocol Interoperability", // display name (also the node id)
+  "skillId":        "a2a-interop",                   // backing skill slug, or null
+  "parentConcept":  "AI Agent Ecosystems",           // parent's `concept`, or null for a root
+  "childConcepts":  ["Agent Cards", "..."],           // child concept names (leaves/sub-nodes)
+  "researchedAt":   "2026-05-25",                     // ISO date or timestamp
+  "sourcesCount":   0,                                 // # research sources backing this node
+  "conceptsCount":  10                                 // size metric for the node
+}
+```
+
+Notes:
+- A node is a **root** when `parentConcept` is `null`.
+- A node is a **dangling fragment** when its `parentConcept` names a `concept` that does not
+  exist in the array — these are real in the current data (see [known-issues.md](known-issues.md)).
+
+#### Rendered graph shape — inlined `const DATA` in the 3D page
+
+The generator flattens the tree into a force-graph `{ nodes, links }`:
+
+```jsonc
+// nodes[]
+{
+  "id":            "10gen Repo Intelligence",  // unique; equals `concept`
+  "name":          "10gen Repo Intelligence",
+  "isRoot":        true,                         // backbone root flag (optional)
+  "isGroup":       true,                         // domain/group node vs leaf
+  "color":         "hsl(0, 62%, 60%)",          // per-domain color
+  "val":           8,                            // node size
+  "group":         "10gen Repo Intelligence",   // domain bucket
+  "skillId":       "10gen",                      // optional
+  "desc":          "…skill description…",        // optional; UNTRUSTED if from external data
+  "sources":       0,
+  "parent":        null,
+  "researchedAt":  "2026-05-25",
+  "refreshedAt":   null,
+  "conceptsCount": 10,
+  "childAll":      ["…"],                          // all child names
+  "leaves":        ["…"],                          // expandable leaf names
+  "leafCount":     4
+}
+// links[]
+{ "source": "<node id>", "target": "<node id>" }
+```
+
+#### Skills-graph shape — `examples/skills-graph.json`
+
+```jsonc
+{
+  "nodes": [
+    { "id": "…", "name": "…", "isRoot": false, "isGroup": true,
+      "color": "…", "val": 1, "group": "…" }
+  ],
+  "links": [ { "source": "<id>", "target": "<id>" } ]
+}
+```
+`skills-graph.json` = 231 nodes / 800 links; `skills-graph-full.json` is the larger variant.
+
+### Security note on `desc` / link fields
+
+When a graph is generated from data you don't control, the `desc` and any URL fields are
+**untrusted** and must be escaped before being inserted into the DOM, or they become an XSS
+vector. See [.github/SECURITY.md](../.github/SECURITY.md).
+
+# Development
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/DEVELOPMENT.md
+
+## Development
+
+_Snapshot: 2026-06-20._
+
+### Prerequisites
+
+- A modern browser (WebGL support for the 3D view).
+- Optional: Python 3 or Node.js, only to run a tiny static file server for local viewing.
+
+There is **no build step, no `package.json`, and no test suite** checked into this repo
+today. Do not document or assume one that doesn't exist (see
+[known-issues.md](known-issues.md) for why the generators are absent).
+
+### Viewing the demos locally
+
+The demo pages load a rendering library by relative path, so serve the repo over HTTP rather
+than opening `file://` URLs:
+
+```sh
+## from the repo root
+python3 -m http.server 8000
+##   root copies (bare paths):  http://localhost:8000/concept-tree-3d.html
+##   examples/ copies (../):    http://localhost:8000/examples/concept-tree-3d.html
+##   also: concept-tree.html, skills-graph.html, skills-graph-full.html (both locations)
+
+## or, with Node installed:
+npx --yes serve .
+```
+
+> The demos exist at both the repo **root** (bare library paths) and under `examples/` (`../`
+> paths). Either works when served from the root. See [known-issues.md](known-issues.md#7).
+
+> ℹ️ The demo pages load their library from the repo root via a `../` relative path
+> (`../concept-tree-3d.bundle.js` / `../d3.v7.min.js`), fixed 2026-06-20. Serve from the repo
+> root (as above) so the `../` resolves. Because these are **generated** files, the same fix
+> must also be made in the upstream generator or it will regress on regeneration — see
+> [known-issues.md](known-issues.md).
+
+### Verifying a page renders
+
+1. Open the page through the local server.
+2. Open the browser **console** — a blank canvas almost always means the library failed to
+   load (the path issue above) or `DATA` failed to parse.
+3. For the 3D page, you should see the control panel (search, **Radial / Tree / Free** layout
+   buttons, domain chips) and a node count readout. Click a node to isolate its neighbors and
+   open the details panel.
+
+### Editing data or output
+
+- The `.html`, `.md`, and `.mmd` files under `examples/` are **generated** (first line is a
+  `GENERATED by scripts/…` banner). Hand-edits are lost on regeneration. To change them for
+  real, change the upstream generator (not in this repo — see
+  [known-issues.md](known-issues.md)) or open an issue to vendor the generators in.
+- To experiment by hand on a one-off basis, edit the inlined `const DATA = {...}` literal
+  directly in a page and reload. Note in any PR that the edit is non-durable.
+
+### Validation
+
+The only automated check is JSON validity, enforced in CI
+(`.github/workflows/ci.yml`). To run the same check locally:
+
+```sh
+git ls-files '*.json' | while read -r f; do
+  node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" && echo "ok: $f" || echo "BAD: $f"
+done
+```
+
+### Troubleshooting
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| Blank page / nothing renders | Library failed to load | Confirm you're serving from the repo root so `../<library>` resolves; check the console |
+| `THREE is not defined` / `ForceGraph3D is not defined` in console | 3D bundle didn't load | Verify `../concept-tree-3d.bundle.js` exists relative to the page |
+| 2D page empty | `d3.v7.min.js` didn't load | Verify `../d3.v7.min.js` exists relative to the page |
+| Counts differ between pages/docs | By design — each artifact counts a different slice | See [known-issues.md](known-issues.md) |
+
+# Codebase overview
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/codebase-overview.md
+
+## Codebase overview
+
+_Snapshot: 2026-06-20. Human-readable file map. If the tree has drifted, this and
+`high_signal_file_index.json` are the files to update first._
+
+### Root — rendering libraries, repo meta, entry docs
+
+| File | Kind | Purpose |
+|---|---|---|
+| `concept-tree-3d.bundle.js` | vendored lib (~1.6 MB) | three.js + 3d-force-graph build; powers the 3D pages. Opaque. |
+| `d3.v7.min.js` | vendored lib (~280 KB) | D3 v7; powers the 2D page. Opaque. |
+| `README.md` | doc | Project entry point, quick start, demo index. |
+| `LICENSE` | legal | Project license. |
+| `tree-example-screen.png` | image | Screenshot: the 3D mind map + control panel (used in README). |
+| `node-details-screen.png` | image | Screenshot: focus mode with the node details panel (used in README). |
+| `CLAUDE.md` / `GEMINI.md` / `.github/copilot-instructions.md` | agent guidance | Rules for AI coding agents (don't hand-edit generated files, no invented build). |
+| `AGENTS.md` | catalog | Repo-local agents (none yet). |
+| `CONTRIBUTING.md` / `CODE_OF_CONDUCT.md` | docs | Contribution + conduct policy. |
+| `memory.md` / `prompts.md` | operator logs | Work log + request log. |
+| `.editorconfig` / `.gitignore` / `.gitattributes` | config | Editor + VCS hygiene; protects vendored/generated files. |
+
+#### Root demo copies (also present under `examples/`)
+
+The demos are intentionally kept in **two** locations (see [known-issues.md](known-issues.md#7)).
+The root copies sit beside the libraries and use **bare** `src=` paths; the `examples/`
+copies use `../`.
+
+| File | Kind | Notes |
+|---|---|---|
+| `concept-tree-3d.html` | demo (generated) | 3D mind map; loads `concept-tree-3d.bundle.js` (sibling, bare path). |
+| `concept-tree.html` | demo (generated) | 2D viz; loads `d3.v7.min.js` (sibling, bare path). |
+| `skills-graph.html` · `skills-graph-full.html` | demo (generated) | Skills graph; loads the 3D bundle (sibling). |
+| `skills-graph.json` · `skills-graph-full.json` | data | Byte-identical to the `examples/` copies. |
+
+### `.github/` — CI & repo automation
+
+| File | Purpose |
+|---|---|
+| `workflows/ci.yml` | Validates every tracked `*.json` parses. |
+| `dependabot.yml` | Weekly GitHub-Actions updates (no npm manifest yet). |
+| `CODEOWNERS` | Reviewer mapping (placeholders — set real handles). |
+| `PULL_REQUEST_TEMPLATE.md` | PR checklist. |
+| `ISSUE_TEMPLATE/bug_report.md` · `feature_request.md` | Issue forms. |
+| `SECURITY.md` | Client-side threat model + reporting. |
+
+### `docs/` — documentation suite
+
+| File | Purpose |
+|---|---|
+| `ARCHITECTURE.md` | System context, components, data flow, ADRs. |
+| `DEVELOPMENT.md` | Run the demos, regenerate, validate, troubleshoot. |
+| `COMPONENTS.md` | Renderers + the source-tree, graph, and skills-graph data schemas. |
+| `known-issues.md` | Broken library paths, missing generators, count discrepancies, removals. |
+| `codebase-overview.md` | This file. |
+| `high_signal_file_index.json` | Machine-readable per-file index for retrieval. |
+
+### `examples/` — demos, data, and static renderings
+
+| File | Kind | Purpose |
+|---|---|---|
+| `concept-tree-3d.html` | demo (generated) | 3D mind map; inlines `const DATA`; loads the 3D bundle. |
+| `concept-tree.html` | demo (generated) | 2D radial/treemap/charts; loads D3. |
+| `skills-graph.html` · `skills-graph-full.html` | demo (generated) | Skills node-link graph; loads the 3D bundle. |
+| `skills-graph.json` (231 nodes/800 links) · `skills-graph-full.json` | data | Graph-shape source data. |
+| `tree.json` | data | Concept-tree source data (array of concept nodes). |
+| `concept-tree.md` · `tree.md` · `tree-mindmap.md` | doc (generated) | Static Markdown / Mermaid renderings. |
+| `README.md` | doc | Original short project blurb (relocated here during reorg). |
+
+> All `examples/*.html`, `*.md`, and the upstream-generated files carry a `GENERATED by …`
+> banner — do not hand-edit; see [known-issues.md](known-issues.md).
+
+# Known issues
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/known-issues.md
+
+## Known issues
+
+_Snapshot: 2026-06-20. Inferred from the actual files and the repo's history during the
+bootstrap pass._
+
+### 1. `examples/*.html` library paths — **RESOLVED 2026-06-20** (durable fix still pending)
+
+**Was:** each demo page loaded its library with a bare filename (e.g.
+`<script src="concept-tree-3d.bundle.js">`), but the libraries live in the repo **root**, not
+in `examples/`, so the `<script>` 404'd and the page rendered blank. Introduced when the demo
+pages were moved into `examples/` without updating the `src=` paths.
+
+**Fix applied:** the four pages now reference `../concept-tree-3d.bundle.js` /
+`../d3.v7.min.js`, which resolve from `examples/`:
+
+- `examples/concept-tree-3d.html` → `../concept-tree-3d.bundle.js`
+- `examples/concept-tree.html` → `../d3.v7.min.js`
+- `examples/skills-graph.html`, `examples/skills-graph-full.html` → `../concept-tree-3d.bundle.js`
+
+> ⚠️ **Durable fix still pending.** These are **generated** files (issue 2). The same `../`
+> change must be made in the upstream generator, or it will regress the next time the pages
+> are regenerated. Until the generators are vendored in, treat this hand-edit as temporary.
+
+### 2. The generators and canonical source data are not in this repo — **major**
+
+The generated files carry banners referencing scripts that **do not exist here**:
+
+- `scripts/build-concept-tree-3d.py` → `concept-tree-3d.html`
+- `scripts/build-concept-tree-viz.mjs` → `concept-tree.html`, `concept-tree.md`
+- `scripts/build-concept-tree-mindmap.py` → `tree-mindmap.md`
+- canonical input referenced as `concept-tree/tree.json` (upstream path)
+
+Consequence: **you cannot regenerate the artifacts from this repo.** Hand-edits to generated
+files will not survive a regeneration done elsewhere.
+
+**Fix options:** vendor the generator scripts + the canonical `tree.json` into this repo
+(e.g. under `scripts/` and `data/`), or document the upstream repo as the source of truth in
+`docs/ARCHITECTURE.md`.
+
+### 3. Node counts disagree across artifacts — **minor (by design, document it)**
+
+Different artifacts report different totals because each counts a different slice:
+
+| Artifact | Reported | What it counts |
+|---|---|---|
+| 3D page subtitle | 465 backbone · 86 domains · 454 concepts · 3404 leaves | backbone vs concepts vs expandable leaves |
+| `concept-tree.md` | 454 concepts · 129 groups (76 roots + 53 fragments) | concept entries + dangling fragments |
+| `tree.md` | 449 concepts · 76 roots · 7,307 sources | concept entries (a different generation) |
+| `tree-mindmap.md` | 473 concept-entry nodes · 86 domains | mindmap entry nodes |
+
+These are not bugs to "reconcile" — a future reader should not "correct" a number that is
+right for its context. (The slight 454 vs 449 vs 473 differences also reflect that the
+artifacts were generated at different times.)
+
+### 4. Dangling parent edges + 1 malformed node in the source tree — **minor**
+
+`concept-tree.md` reports **53 fragments** whose `parentConcept` names a node that doesn't
+exist (e.g. `Blockchain protocols`, `Human Psychology`, `Programming Languages`), plus **1
+malformed node** filtered during the build. This is a data-quality issue in the upstream
+`tree.json`, surfaced by visualizing it. Roughly **23%** of concepts carry zero sources
+(structural placeholders).
+
+### 5. Files removed during the reorg — **verify intent**
+
+During the bootstrap, two files present at the start were removed, and the root README was
+relocated:
+
+- `concept-tree-screenshot.png` — removed.
+- `tree-mindmap-full.mmd` (the full leaf-expanded Mermaid mindmap, ~3929 nodes) — removed.
+- root `README.md` — moved to `examples/README.md` (git shows `D README.md`); a fresh root
+  `README.md` was written by the bootstrap as the repo entry point.
+
+If any of these removals were unintentional, restore from git history
+(`git checkout HEAD -- README.md` for the old root README) or regenerate.
+
+### 7. Demos duplicated at root and under `examples/` — **intentional (documented)**
+
+The demo pages exist in **two** locations by choice:
+
+- **Repo root** — `concept-tree-3d.html`, `concept-tree.html`, `skills-graph.html`,
+  `skills-graph-full.html` (+ `skills-graph*.json`). These sit beside the libraries and use
+  **bare** `src=` paths (`concept-tree-3d.bundle.js` / `d3.v7.min.js`).
+- **`examples/`** — the same pages with `../` paths (libraries are one level up).
+
+The `.json` data files are byte-identical between the two locations. Trade-off: ~2 MB of
+duplicated content in history, and any regeneration must update **both** copies. If this
+duplication stops being useful, collapse to one location and update the docs + this note.
+
+### 6. Large binaries in the repo — **watch**
+
+`concept-tree-3d.bundle.js` (~1.6 MB) and the demo JSON/HTML are sizable. If history growth
+becomes a problem, consider Git LFS (a commented-out filter is in `.gitattributes`).
+
+# json-3d-renderer
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/examples/README.md
+
+## json-3d-renderer
+Converts mind map style json files into a mind map style 3d visualized map with focus mode and descriptions
+

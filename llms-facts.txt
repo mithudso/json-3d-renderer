@@ -1,0 +1,20 @@
+<!-- Generated 2026-09-25 [gen: p/1.1.0]; verified-as-of 2026-09-25 -->
+
+# json-3d-renderer: Sourced Project Facts
+
+One declarative fact per line, each with a `[src:]` tag.
+
+## 2026-09-25 [gen: p/1.1.0]
+
+- The repo ships rendering libraries plus generated demo visualizations under examples/ [src: README.md]
+- The build scripts that generate the demos live in a separate upstream repo and are not checked in [src: README.md]
+- The 3D demo (concept-tree-3d.html) renders with concept-tree-3d.bundle.js, which bundles three.js and 3d-force-graph [src: README.md]
+- The 2D demo (concept-tree.html) renders with d3.v7.min.js [src: README.md]
+- The 3D mind map shows 465 backbone nodes across 86 domains [src: README.md]
+- The 3D control panel offers Radial, Top-down and Free layouts, label toggles and clickable domain chips [src: README.md]
+- Clicking a node enters focus mode, isolating linked neighbors and opening a details panel [src: README.md]
+- Each HTML demo inlines its own data as a const DATA literal, so it is self-contained except for the rendering library [src: README.md]
+- Demos should be opened through a local web server (python3 -m http.server 8000 from the repo root) rather than file:// [src: README.md]
+- Demo pages under examples/ load the library via ../ relative paths; this hand-edit must also land in the upstream generator [src: docs/known-issues.md]
+- The generators named in the file banners (scripts/build-concept-tree-3d.py, scripts/build-concept-tree-viz.mjs, scripts/build-concept-tree-mindmap.py) do not exist in this repo [src: docs/known-issues.md]
+- Sample inputs are examples/tree.json (concept-tree shape) and examples/skills-graph.json (graph shape) [src: README.md]
