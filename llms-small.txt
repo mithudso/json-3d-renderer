@@ -1,0 +1,47 @@
+<!-- Generated 2026-09-25 [gen: p/1.1.0]; verified-as-of 2026-09-25 -->
+
+# json-3d-renderer
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/README.md
+
+Converts mind-map-style JSON into an interactive **3D mind-map visualization** with focus mode and per-node descriptions — plus 2D (D3) and Markdown/Mermaid renderings of the same data.
+
+# Semantic Indexing Rule
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/CLAUDE.md
+
+Guidance for Claude Code (and other AI coding agents) working in this repository.
+
+# AGENTS.md — json-3d-renderer
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/AGENTS.md
+
+Catalog of repository-local agents (custom subagents, automations) defined for this repo.
+
+# Architecture
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/ARCHITECTURE.md
+
+_Snapshot: 2026-06-20.
+
+# Components & data schemas
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/COMPONENTS.md
+
+_Snapshot: 2026-06-20.
+
+# Development
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/DEVELOPMENT.md
+
+_Snapshot: 2026-06-20._
+
+# Codebase overview
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/codebase-overview.md
+
+_Snapshot: 2026-06-20.
+
+# Known issues
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/docs/known-issues.md
+
+_Snapshot: 2026-06-20.
+
+# json-3d-renderer
+Source: https://github.com/mithudso/json-3d-renderer/blob/HEAD/examples/README.md
+
+
+
