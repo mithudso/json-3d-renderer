@@ -77,6 +77,26 @@ graph inlined and a `<script>` tag pointing at a rendering library. The 3D page 
 - [docs/known-issues.md](docs/known-issues.md) — active gaps and workarounds
 - [CONTRIBUTING.md](CONTRIBUTING.md) · [CLAUDE.md](CLAUDE.md) (AI-agent guidance)
 
+## Consuming
+
+Other repos carry a byte-identical copy of `concept-tree-3d.bundle.js`. Pin the version by git tag, then copy and verify.
+
+```bash
+# in the consumer repo: fetch a pinned release (private repo: needs git credentials for github.com/mithudso)
+npm i -D github:mithudso/json-3d-renderer#v0.1.0
+cp node_modules/@mithudso/json-3d-renderer/concept-tree-3d.bundle.js path/to/vendor/concept-tree-3d.bundle.js
+
+# verify the copy matches the pinned bundle (exit 0 = identical)
+node node_modules/@mithudso/json-3d-renderer/scripts/verify-copy.mjs path/to/vendor/concept-tree-3d.bundle.js
+```
+
+Or from a checkout of this repo: `node scripts/verify-copy.mjs /Users/mitch.hudson/dev/<consumer>/<path>/concept-tree-3d.bundle.js`
+(accepts several paths). Plain md5 works too: `md5 concept-tree-3d.bundle.js path/to/copy.js` (macOS) or `md5sum` (Linux); the sums must be equal.
+`v0.1.0` bundle md5: `10296029343709356d741bfd56446046`.
+
+Known copies (checked 2026-10-20, all identical): `llms-explorer/site/public/vendor/` and `mdb-context-hub/concept-tree/viz/`
+(plus the build output `llms-explorer/site/dist/vendor/`). To release a new bundle, commit it, bump `version` in `package.json`, tag `vX.Y.Z`, `git push origin main --tags`, then update each consumer's pin and copy.
+
 ## License
 
 See [LICENSE](LICENSE).
