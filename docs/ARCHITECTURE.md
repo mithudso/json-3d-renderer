@@ -1,7 +1,6 @@
 # Architecture
 
-_Snapshot: 2026-06-20. This repo was being reorganized when these docs were written; if the
-layout has drifted, reconcile against `docs/codebase-overview.md`._
+_Maintainer tooling verified 2026-11-12. Demo counts and layouts describe frozen snapshots._
 
 ## System context
 
@@ -70,3 +69,24 @@ documented in [COMPONENTS.md](COMPONENTS.md).
 - **ADR-003 — Offline-first, no server.** No build/runtime dependencies at view time.
   *Consequence:* opening via `file://` can hit browser path/security quirks; a tiny static
   server is the recommended way to view (see [DEVELOPMENT.md](DEVELOPMENT.md)).
+
+
+## Maintained tooling
+
+`inject-data.js` reads explicit local files and calls pure `lib/concept-graph.cjs` helpers.
+`buildGraph` validates records, resolves ancestry once, assigns branch colors, and retains
+missing-parent nodes as disconnected fragments. `renderHtml` scans a trusted template's DATA
+JSON object and serializes script-safe replacement data. The CLI exclusively creates output.
+This converter does not reproduce the absent original page generators or update their fixed UI.
+
+`verify-copy.mjs` checks consumer bytes. `check-repo.mjs` validates JSON and maintained syntax.
+`check-doc-indexes.mjs` is the sole writer of retrieval metadata and the llms family; no vector
+store is involved. `rotate-workflow-logs.mjs` preserves full originals before log rotation.
+Tests isolate all filesystem and subprocess work in synthetic fixtures.
+
+- **ADR-004 — Explicit local conversion, accepted 2026-11-12.** Remove the private hub input
+  default and fixed output overwrite. Require paths and refuse existing output. Consequence:
+  older no-argument invocation becomes a usage error; validation can run safely on synthetic input.
+- **ADR-005 — Deterministic lexical metadata, accepted 2026-11-12.** Generate and CI-check all
+  retrieval paths. No semantic index, embedding pipeline, daemon or application server is added.
+  Consequence: retrieval supports file/command discovery without claiming semantic search.

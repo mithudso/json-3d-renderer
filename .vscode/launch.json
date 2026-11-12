@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "configurations": [{
+    "name": "Verify bundle copy",
+    "type": "node",
+    "request": "launch",
+    "program": "${workspaceFolder}/scripts/verify-copy.mjs",
+    "args": ["${workspaceFolder}/concept-tree-3d.bundle.js"],
+    "console": "integratedTerminal"
+  }]
+}

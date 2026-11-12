@@ -1,6 +1,7 @@
 {
   "name": "@mithudso/json-3d-renderer",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "type": "commonjs",
   "description": "Hierarchical JSON to interactive 3D/2D concept-tree graphs; ships concept-tree-3d.bundle.js",
   "license": "GPL-3.0-only",
   "author": "Mitchell Hudson",
@@ -11,6 +12,10 @@
   "engines": { "node": ">=18" },
   "scripts": {
     "verify-copy": "node scripts/verify-copy.mjs",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "lint": "node scripts/check-repo.mjs",
+    "docs:check": "node scripts/check-doc-indexes.mjs",
+    "docs:update": "node scripts/check-doc-indexes.mjs --write",
+    "logs:rotate": "node scripts/rotate-workflow-logs.mjs"
   }
 }

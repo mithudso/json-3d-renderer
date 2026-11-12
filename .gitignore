@@ -6,7 +6,7 @@ Thumbs.db
 .idea/
 *.code-workspace
 
-# Node (if a build is ever added)
+# Node tooling
 node_modules/
 npm-debug.log*
 yarn-error.log*
@@ -26,6 +26,8 @@ tmp/
 # Local env
 .env
 .env.local
+*.rotate-*
+*.tgz
 
 # NOTE: the generated visualization artifacts (examples/*.html, examples/*.json,
 # examples/*.md) and the vendored rendering libraries (concept-tree-3d.bundle.js,

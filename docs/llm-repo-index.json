@@ -1,0 +1,357 @@
+{
+  "generator": "scripts/check-doc-indexes.mjs",
+  "files": [
+    {
+      "path": ".editorconfig",
+      "role": "config"
+    },
+    {
+      "path": ".env.example",
+      "role": "config"
+    },
+    {
+      "path": ".gitattributes",
+      "role": "config"
+    },
+    {
+      "path": ".github/CODEOWNERS",
+      "role": "config"
+    },
+    {
+      "path": ".github/FUNDING.yml",
+      "role": "config"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "role": "documentation"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+      "role": "documentation"
+    },
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "role": "documentation"
+    },
+    {
+      "path": ".github/SECURITY.md",
+      "role": "documentation"
+    },
+    {
+      "path": ".github/copilot-instructions.md",
+      "role": "documentation"
+    },
+    {
+      "path": ".github/dependabot.yml",
+      "role": "config"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "role": "config"
+    },
+    {
+      "path": ".gitignore",
+      "role": "config"
+    },
+    {
+      "path": ".nvmrc",
+      "role": "config"
+    },
+    {
+      "path": ".vscode/extensions.json",
+      "role": "config"
+    },
+    {
+      "path": ".vscode/launch.json",
+      "role": "config"
+    },
+    {
+      "path": ".vscode/settings.json",
+      "role": "config"
+    },
+    {
+      "path": "AGENTS.md",
+      "role": "documentation"
+    },
+    {
+      "path": "CLAUDE.md",
+      "role": "documentation"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "role": "documentation"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "role": "documentation"
+    },
+    {
+      "path": "GEMINI.md",
+      "role": "documentation"
+    },
+    {
+      "path": "LICENSE",
+      "role": "documentation"
+    },
+    {
+      "path": "README.md",
+      "role": "documentation"
+    },
+    {
+      "path": "concept-tree-3d.bundle.js",
+      "role": "vendored"
+    },
+    {
+      "path": "concept-tree-3d.html",
+      "role": "generated"
+    },
+    {
+      "path": "concept-tree.html",
+      "role": "generated"
+    },
+    {
+      "path": "d3.v7.min.js",
+      "role": "vendored"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/COMPONENTS.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/DEVELOPMENT.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/INSTALLATION.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/MCP.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/SECURITY.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/TESTING.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/archive/README.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/caching-and-optimization.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/code-deep-optimizer-2026-11-12.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/codebase-overview.md",
+      "role": "generated"
+    },
+    {
+      "path": "docs/external-calls.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/high_signal_file_index.json",
+      "role": "generated"
+    },
+    {
+      "path": "docs/integrations-and-assumptions.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/known-issues.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/llm-repo-index.json",
+      "role": "generated"
+    },
+    {
+      "path": "docs/logging.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/maintenance-coverage-2026-11-12.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/onboarding.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/repo-bootstrap-audit-2026-11-12.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/requirements.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/runbooks/validation.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/tool-inventory.json",
+      "role": "config"
+    },
+    {
+      "path": "docs/wiki/index.md",
+      "role": "documentation"
+    },
+    {
+      "path": "examples/README.md",
+      "role": "documentation"
+    },
+    {
+      "path": "examples/concept-tree-3d.html",
+      "role": "generated"
+    },
+    {
+      "path": "examples/concept-tree.html",
+      "role": "generated"
+    },
+    {
+      "path": "examples/concept-tree.md",
+      "role": "generated"
+    },
+    {
+      "path": "examples/skills-graph-full.html",
+      "role": "generated"
+    },
+    {
+      "path": "examples/skills-graph-full.json",
+      "role": "data"
+    },
+    {
+      "path": "examples/skills-graph.html",
+      "role": "generated"
+    },
+    {
+      "path": "examples/skills-graph.json",
+      "role": "data"
+    },
+    {
+      "path": "examples/tree-mindmap.md",
+      "role": "generated"
+    },
+    {
+      "path": "examples/tree.json",
+      "role": "data"
+    },
+    {
+      "path": "examples/tree.md",
+      "role": "generated"
+    },
+    {
+      "path": "global-ai-hub-3d.html",
+      "role": "generated"
+    },
+    {
+      "path": "inject-data.js",
+      "role": "tooling"
+    },
+    {
+      "path": "lib/concept-graph.cjs",
+      "role": "library"
+    },
+    {
+      "path": "llms-facts.txt",
+      "role": "generated"
+    },
+    {
+      "path": "llms-full.txt",
+      "role": "generated"
+    },
+    {
+      "path": "llms-small.txt",
+      "role": "generated"
+    },
+    {
+      "path": "llms.txt",
+      "role": "generated"
+    },
+    {
+      "path": "memory.md",
+      "role": "documentation"
+    },
+    {
+      "path": "node-details-screen.png",
+      "role": "binary"
+    },
+    {
+      "path": "package-lock.json",
+      "role": "config"
+    },
+    {
+      "path": "package.json",
+      "role": "config"
+    },
+    {
+      "path": "prompts.md",
+      "role": "documentation"
+    },
+    {
+      "path": "scripts/check-doc-indexes.mjs",
+      "role": "tooling"
+    },
+    {
+      "path": "scripts/check-repo.mjs",
+      "role": "tooling"
+    },
+    {
+      "path": "scripts/rotate-workflow-logs.mjs",
+      "role": "tooling"
+    },
+    {
+      "path": "scripts/verify-copy.mjs",
+      "role": "tooling"
+    },
+    {
+      "path": "skills-graph-full.html",
+      "role": "generated"
+    },
+    {
+      "path": "skills-graph-full.json",
+      "role": "data"
+    },
+    {
+      "path": "skills-graph.html",
+      "role": "generated"
+    },
+    {
+      "path": "skills-graph.json",
+      "role": "data"
+    },
+    {
+      "path": "test/inject-data.test.js",
+      "role": "test"
+    },
+    {
+      "path": "test/maintenance.test.js",
+      "role": "test"
+    },
+    {
+      "path": "test/package.json",
+      "role": "test"
+    },
+    {
+      "path": "test/verify-copy.test.js",
+      "role": "test"
+    },
+    {
+      "path": "tree-example-screen.png",
+      "role": "binary"
+    }
+  ]
+}

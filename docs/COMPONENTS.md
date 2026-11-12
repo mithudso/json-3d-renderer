@@ -108,3 +108,41 @@ The generator flattens the tree into a force-graph `{ nodes, links }`:
 When a graph is generated from data you don't control, the `desc` and any URL fields are
 **untrusted** and must be escaped before being inserted into the DOM, or they become an XSS
 vector. See [.github/SECURITY.md](../.github/SECURITY.md).
+
+
+## Local conversion library — `lib/concept-graph.cjs`
+
+This CommonJS module uses no dependencies or filesystem I/O. It exports:
+
+- `buildGraph(tree)`: accepts a concept-array, returns `{nodes, links}` without mutating input.
+  Each record needs a nonblank string `concept`. `parentConcept` is a string, null or absent;
+  `childConcepts` is an optional string array; `researchedAt` is an optional string. Duplicate
+  ids, cycles, malformed fields and `<` in names throw `TypeError`. Root children start their
+  own branch; deeper descendants inherit that branch's color. Missing parents create fragments
+  with no invalid link endpoint. Node sizing and palette are centralized in this module.
+- `renderHtml(html, graph)`: accepts a trusted HTML template and a graph returned by `buildGraph`.
+  Requires exactly one JSON-object `const DATA = ...;` declaration. Scans quoted strings before
+  replacement and escapes `<`, U+2028 and U+2029 in serialized JSON. Throws on invalid templates.
+  The template and its HTML tooltip code remain trusted; this is not an arbitrary HTML sanitizer.
+
+```js
+const { buildGraph, renderHtml } = require('./lib/concept-graph.cjs');
+const graph = buildGraph([{ concept: 'Example', parentConcept: null }]);
+const html = renderHtml('<script>const DATA = {};</script>', graph);
+```
+
+`inject-data.js` owns CLI input/output and exports `main(args)` returning 0 for success, 1 for
+validation/I/O failure and 2 for usage. It defaults only the template, never the source data or
+output. It writes a new file using `wx` and emits redacted JSON status events.
+
+## Maintenance tools
+
+| Path | Interface and effects |
+|---|---|
+| `scripts/verify-copy.mjs` | CLI paths; hashes reference/copies; exit 0 equal, 1 mismatch/read error, 2 usage |
+| `scripts/check-repo.mjs` | CLI without args; parse JSON and syntax-check maintained JS; exit nonzero on failure |
+| `scripts/check-doc-indexes.mjs` | CLI check or `--write`; exports `repositoryFiles(root)` and `buildOutputs(root)` for deterministic local metadata |
+| `scripts/rotate-workflow-logs.mjs` | CLI without args; exports `rotateLogs(root)` and `MAX_LOG_BYTES`; archives oversized logs, refuses editor swap files |
+
+Root package `.js` uses CommonJS, `test/package.json` gives tests ESM scope, and `.mjs` tools
+use ESM. CI depends on these tools, not on an app build or a remote service.

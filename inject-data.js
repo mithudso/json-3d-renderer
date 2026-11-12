@@ -1,81 +1,39 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
+const { buildGraph, renderHtml } = require('./lib/concept-graph.cjs');
 
-async function main() {
+/** Generate a new page from explicit local input. Never overwrite an existing file. */
+function main(args = process.argv.slice(2)) {
+  if (args.length < 2 || args.length > 3 || args.some((arg) => arg.startsWith('--'))) {
+    console.error('Usage: node inject-data.js <tree.json> <new-output.html> [template.html]');
+    return 2;
+  }
+  const [input, output, template = path.join(__dirname, 'concept-tree-3d.html')] = args.map((arg) => path.resolve(arg));
+  if (output === input || output === template) {
+    console.error(JSON.stringify({ event: 'generation_failed', code: 'OUTPUT_CONFLICT' }));
+    return 1;
+  }
+  let stage = 'INPUT_READ';
+  console.log(JSON.stringify({ event: 'generation_started' }));
   try {
-    const treeDataPath = '/Users/mitch.hudson/.global-ai-hub/concept-tree/tree.json';
-    const treeDataRaw = fs.readFileSync(treeDataPath, 'utf8');
-    const treeData = JSON.parse(treeDataRaw);
-
-    const nodes = [];
-    const links = [];
-
-    const colors = [
-      "#ffffff", "hsl(0, 62%, 60%)", "hsl(138, 62%, 60%)", "hsl(275, 62%, 60%)", "hsl(53, 62%, 60%)",
-      "hsl(190, 62%, 60%)", "hsl(328, 62%, 60%)", "hsl(105, 62%, 60%)", "hsl(243, 62%, 60%)", "hsl(20, 62%, 60%)"
-    ];
-    let colorIdx = 0;
-    const groupColorMap = {};
-
-    // Precompute map for O(1) lookups
-    const conceptMap = new Map();
-    for (const item of treeData) {
-      conceptMap.set(item.concept, item);
-    }
-
-    for (const item of treeData) {
-      const isRoot = item.parentConcept === null;
-      const isGroup = item.childConcepts && item.childConcepts.length > 0;
-      
-      let group = item.concept;
-      if (!isRoot && item.parentConcept) {
-        let p = conceptMap.get(item.parentConcept);
-        while (p && p.parentConcept) {
-          group = p.parentConcept;
-          p = conceptMap.get(p.parentConcept);
-        }
-      }
-
-      if (!groupColorMap[group]) {
-        groupColorMap[group] = colors[colorIdx % colors.length];
-        colorIdx++;
-      }
-
-      nodes.push({
-        id: item.concept,
-        name: item.concept,
-        isRoot,
-        isGroup,
-        group: group,
-        color: groupColorMap[group],
-        val: isRoot ? 40 : (isGroup ? 16 : 8),
-        desc: `Researched on ${item.researchedAt}`,
-        leafCount: item.childConcepts ? item.childConcepts.length : 0
-      });
-
-      if (item.parentConcept) {
-        links.push({
-          source: item.parentConcept,
-          target: item.concept
-        });
-      }
-    }
-
-    const DATA = { nodes, links };
-
-    const templatePath = path.join(__dirname, 'concept-tree-3d.html');
-    const html = fs.readFileSync(templatePath, 'utf8');
-    
-    // Replace DATA using a function to avoid regex '$' replacement bugs, and handle multi-line objects
-    const newHtml = html.replace(/const DATA\s*=\s*\{[\s\S]*?\};/, () => `const DATA = ${JSON.stringify(DATA)};`);
-
-    const outputPath = path.join(__dirname, 'global-ai-hub-3d.html');
-    fs.writeFileSync(outputPath, newHtml);
-    console.log('Successfully generated global-ai-hub-3d.html');
+    const tree = JSON.parse(fs.readFileSync(input, 'utf8'));
+    stage = 'GRAPH_VALIDATION';
+    const graph = buildGraph(tree);
+    stage = 'TEMPLATE_READ';
+    const html = fs.readFileSync(template, 'utf8');
+    stage = 'TEMPLATE_VALIDATION';
+    const rendered = renderHtml(html, graph);
+    stage = 'OUTPUT_WRITE';
+    fs.writeFileSync(output, rendered, { flag: 'wx' });
+    console.log(JSON.stringify({ event: 'generation_completed', nodes: graph.nodes.length, links: graph.links.length }));
+    return 0;
   } catch (error) {
-    console.error('Error injecting data:', error);
-    process.exit(1);
+    // Do not log source data, JSON parser excerpts, local paths or stack traces.
+    console.error(JSON.stringify({ event: 'generation_failed', code: `${stage}_FAILED`,
+      cause: /^[A-Z_]+$/.test(error.code || '') ? error.code : 'INVALID_DATA' }));
+    return 1;
   }
 }
 
-main();
+module.exports = { main };
+if (require.main === module) process.exitCode = main();
