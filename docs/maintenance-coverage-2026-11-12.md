@@ -42,3 +42,72 @@ for package/dependency consistency. Generated artifact hashes (except intentiona
 retrieval metadata) and the root/examples data-copy equivalence are verified after changes.
 The source universe is complete for maintained files; browser rendering and absent upstream
 sources remain bounded exclusions. Test counts are behavioral receipts, not coverage percentages.
+
+## Delivery file accounting
+
+The final inventory has88 paths. The task owns58 changed files (24 existing,34 new).
+No baseline source was omitted or truncated. New code and all12 maintained executable/config
+review targets were read in full in fresh contexts. Final blind gate2 passed all18 passes with
+no corroborated Medium+ finding. The first blind dissent and every correction remain visible
+in the optimizer report. The final20 tests check behavior; no numeric coverage is claimed.
+
+| Task-owned file | Disposition |
+|---|---|
+| `.env.example` | Created; reviewed |
+| `.github/CODEOWNERS` | Updated; reviewed |
+| `.github/PULL_REQUEST_TEMPLATE.md` | Updated; reviewed |
+| `.github/SECURITY.md` | Updated; reviewed |
+| `.github/copilot-instructions.md` | Updated; reviewed |
+| `.github/dependabot.yml` | Updated; reviewed |
+| `.github/workflows/ci.yml` | Updated; reviewed |
+| `.gitignore` | Updated; reviewed |
+| `.nvmrc` | Created; reviewed |
+| `.vscode/extensions.json` | Created; reviewed |
+| `.vscode/launch.json` | Created; reviewed |
+| `.vscode/settings.json` | Created; reviewed |
+| `CLAUDE.md` | Updated; reviewed |
+| `CONTRIBUTING.md` | Updated; reviewed |
+| `GEMINI.md` | Created; reviewed |
+| `README.md` | Updated; reviewed |
+| `docs/ARCHITECTURE.md` | Updated; reviewed |
+| `docs/COMPONENTS.md` | Updated; reviewed |
+| `docs/DEVELOPMENT.md` | Updated; reviewed |
+| `docs/INSTALLATION.md` | Created; reviewed |
+| `docs/MCP.md` | Created; reviewed |
+| `docs/SECURITY.md` | Created; reviewed |
+| `docs/TESTING.md` | Created; reviewed |
+| `docs/archive/README.md` | Created; reviewed |
+| `docs/caching-and-optimization.md` | Created; reviewed |
+| `docs/code-deep-optimizer-2026-11-12.md` | Created; reviewed |
+| `docs/codebase-overview.md` | Updated; reviewed |
+| `docs/external-calls.md` | Created; reviewed |
+| `docs/high_signal_file_index.json` | Updated; reviewed |
+| `docs/integrations-and-assumptions.md` | Created; reviewed |
+| `docs/known-issues.md` | Updated; reviewed |
+| `docs/llm-repo-index.json` | Created; reviewed |
+| `docs/logging.md` | Created; reviewed |
+| `docs/maintenance-coverage-2026-11-12.md` | Created; reviewed |
+| `docs/onboarding.md` | Created; reviewed |
+| `docs/repo-bootstrap-audit-2026-11-12.md` | Created; reviewed |
+| `docs/requirements.md` | Created; reviewed |
+| `docs/runbooks/validation.md` | Created; reviewed |
+| `docs/tool-inventory.json` | Created; reviewed |
+| `docs/wiki/index.md` | Created; reviewed |
+| `inject-data.js` | Updated; reviewed |
+| `lib/concept-graph.cjs` | Created; reviewed |
+| `llms-facts.txt` | Updated; reviewed |
+| `llms-full.txt` | Updated; reviewed |
+| `llms-small.txt` | Updated; reviewed |
+| `llms.txt` | Updated; reviewed |
+| `memory.md` | Created; reviewed |
+| `package-lock.json` | Created; reviewed |
+| `package.json` | Updated; reviewed |
+| `prompts.md` | Created; reviewed |
+| `scripts/check-doc-indexes.mjs` | Created; reviewed |
+| `scripts/check-repo.mjs` | Created; reviewed |
+| `scripts/rotate-workflow-logs.mjs` | Created; reviewed |
+| `scripts/verify-copy.mjs` | Updated; reviewed |
+| `test/inject-data.test.js` | Created; reviewed |
+| `test/maintenance.test.js` | Created; reviewed |
+| `test/package.json` | Created; reviewed |
+| `test/verify-copy.test.js` | Updated; reviewed |

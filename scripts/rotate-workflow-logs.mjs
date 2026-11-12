@@ -1,10 +1,27 @@
 #!/usr/bin/env node
-import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync, renameSync, rmSync } from 'node:fs';
-import { createHash } from 'node:crypto';
+import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync, renameSync, rmSync, linkSync, lstatSync, mkdtempSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const MAX_LOG_BYTES = 200 * 1024;
+
+function versionSections(text) {
+  const sections = [];
+  let offset = 0;
+  let fence = '';
+  for (const line of text.split(/(?<=\n)/)) {
+    const marker = line.match(/^ {0,3}(`{3,}|~{3,})/);
+    if (marker) {
+      if (!fence) fence = marker[1];
+      else if (marker[1][0] === fence[0] && marker[1].length >= fence.length &&
+          line.slice(marker[0].length).trim() === '') fence = '';
+    } else if (!fence && /^## (?:v\d+(?:\.\d+){0,2}|Prompt v\d+)(?: - [^\r\n]+)?\s*$/.test(line)) {
+      sections.push({ index: offset });
+    }
+    offset += line.length;
+  }
+  return sections;
+}
 
 /** Archive full originals before retaining each oversized log's latest version. */
 export function rotateLogs(root) {
@@ -17,22 +34,43 @@ export function rotateLogs(root) {
   for (const name of logs) {
     const path = join(root, name);
     if (!existsSync(path)) continue;
+    const stat = lstatSync(path);
+    if (!stat.isFile()) throw new Error('LOG_NOT_REGULAR');
     const original = readFileSync(path, 'utf8');
     if (Buffer.byteLength(original) <= MAX_LOG_BYTES) continue;
-    const sections = [...original.matchAll(/^## (?:v|Prompt v).+$/gm)];
+    const sections = versionSections(original);
     if (sections.length < 2) throw new Error('NO_ARCHIVABLE_SECTIONS');
-    const archiveName = `${name.slice(0, -3)}-${createHash('sha256').update(original).digest('hex').slice(0, 16)}.md`;
-    const archive = join(root, 'docs/archive', archiveName);
-    mkdirSync(dirname(archive), { recursive: true });
-    if (!existsSync(archive)) writeFileSync(archive, original, { flag: 'wx' });
-    if (readFileSync(archive, 'utf8') !== original) throw new Error('ARCHIVE_MISMATCH');
+    const archiveRoot = join(root, 'docs/archive');
+    mkdirSync(archiveRoot, { recursive: true });
+    // A private, exclusively created directory owns all temporary and archive paths.
+    const directory = mkdtempSync(join(archiveRoot, `${name.slice(0, -3)}-`));
+    const archive = join(directory, name);
+    const temporary = join(directory, 'retained.tmp');
+    const mode = stat.mode & 0o777;
+    writeFileSync(join(directory, 'snapshot.md'), original, { flag: 'wx', mode });
+    const archiveLink = `docs/archive/${directory.slice(archiveRoot.length + 1)}/${name}`;
     const retained = original.slice(0, sections[0].index) +
-      `Previous entries: [archive](docs/archive/${archiveName}).\n\n` + original.slice(sections.at(-1).index);
-    const temporary = `${path}.rotate-${process.pid}`;
+      `Previous entries: [archive](${archiveLink}).\n\n` + original.slice(sections.at(-1).index);
+    let temporaryCreated = false;
+    let retired = false;
     try {
-      writeFileSync(temporary, retained, { flag: 'wx' });
-      renameSync(temporary, path);
-    } finally { rmSync(temporary, { force: true }); }
+      writeFileSync(temporary, retained, { flag: 'wx', mode });
+      temporaryCreated = true;
+      // Capture the live inode, including any editor atomic save since the initial read.
+      renameSync(path, archive);
+      retired = true;
+      if (readFileSync(archive, 'utf8') !== original) throw new Error('LOG_CHANGED_DURING_ROTATION');
+      // Never replace a new file that another writer created during the retirement gap.
+      linkSync(temporary, path);
+    } catch (error) {
+      if (retired) {
+        try { linkSync(archive, path); }
+        catch (restoreError) { if (restoreError.code !== 'EEXIST') throw restoreError; }
+      }
+      throw error;
+    } finally {
+      if (temporaryCreated) rmSync(temporary);
+    }
     rotated.push(name);
   }
   return rotated;

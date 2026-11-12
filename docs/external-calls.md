@@ -13,7 +13,7 @@ operations dashboard for these short local tools would invent a runtime that the
 | `scripts/check-doc-indexes.mjs:repositoryFiles` | `git ls-files -z`; local read-only census | Exit status / error code; Unicode/newline fixture in maintenance tests | Run in a Git checkout |
 | `scripts/check-doc-indexes.mjs:buildOutputs` | Read package/docs; optional metadata writes | Deterministic drift report; repeated-output test | Run `npm run docs:update` and review diff |
 | `scripts/check-repo.mjs` | Parse JSON; `node --check` each maintained source | Counts and per-path failures; CI executes the command | Fix reported source; do not retry invalid JSON |
-| `scripts/rotate-workflow-logs.mjs:rotateLogs` | Read logs; archive/read back originals; atomically replace retained log | JSON outcome; archive and swap-guard assertions | Close editor; inspect archive and current log before retry |
+| `scripts/rotate-workflow-logs.mjs:rotateLogs` | Snapshot logs; retire the live file into an archive; exclusively install retained content | JSON outcome; archive and swap-guard assertions | Close editor; inspect archive and current log before retry |
 | `test/*.test.js` | Spawn Node/Git with argument arrays; disposable filesystem fixtures | Assertions, exit codes and cleanup in `finally` | Fix failing behavior; never use live external data |
 
 No network retry/backoff, MCP trigger, dashboard, central error log or `DATASTORE_VERIFY_FAILED`

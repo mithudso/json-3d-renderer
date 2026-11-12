@@ -39,8 +39,8 @@ test('all result lines drain to a pipe before the CLI exits', () => {
     copyFileSync(join(root, 'scripts/verify-copy.mjs'), script);
     const bundle = join(dir, 'concept-tree-3d.bundle.js');
     writeFileSync(bundle, 'x');
-    const result = spawnSync(process.execPath, [script, ...Array(5000).fill(bundle)], {
-      encoding: 'utf8', maxBuffer: 8 * 1024 * 1024, timeout: 10000,
+    const result = spawnSync(process.execPath, [script, ...Array(5000).fill('concept-tree-3d.bundle.js')], {
+      cwd: dir, encoding: 'utf8', maxBuffer: 8 * 1024 * 1024, timeout: 10000,
     });
     assert.equal(result.status, 0, result.stderr);
     assert.equal(result.stdout.trim().split('\n').length, 5001);

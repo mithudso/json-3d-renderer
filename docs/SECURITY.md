@@ -25,7 +25,9 @@ pages safe. Missing parent records remain visible as fragments without invalid r
 
 MD5 in the copy verifier is an accidental-drift check, not a cryptographic authenticity guarantee.
 The vendored 3D bundle has no reproducible build manifest here; its full transitive dependency
-security status is unknown. D3 identifies v7.9.0 in its banner. No runtime npm dependencies exist.
+security status is unknown. D3 identifies v7.9.0 in its banner. No runtime npm dependencies exist. Acorn 8.19.0 is a pinned MIT development dependency
+used to parse trusted templates without evaluation. `npm audit` checks this dependency, not
+the opaque vendored browser libraries.
 
 ## Secrets and incident response
 

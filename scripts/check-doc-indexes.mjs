@@ -9,6 +9,12 @@ const OUTPUTS = ['docs/high_signal_file_index.json', 'docs/llm-repo-index.json',
   'docs/codebase-overview.md', 'llms.txt', 'llms-small.txt', 'llms-facts.txt', 'llms-full.txt'];
 const VENDORS = new Set(['concept-tree-3d.bundle.js', 'd3.v7.min.js']);
 
+const markdownText = (value) => String(value).replace(/[&<>]/g, (char) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[char])
+  .replace(/[\\`*_{}[\]()#+.!|]/g, '\\$&').replace(/[\r\n]/g, ' ');
+const linkPath = (path) => path.split('/').map((part) => encodeURIComponent(part)
+  .replace(/[!'()*]/g, (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`)).join('/');
+
 /** Enumerate tracked and non-ignored new files without Git filename quoting. */
 export function repositoryFiles(root = ROOT) {
   return [...new Set(execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'],
@@ -33,8 +39,10 @@ function card(root, path) {
   const purpose = title || ({ vendored: 'Opaque rendering library; preserve bytes',
     binary: 'Visualization screenshot', generated: 'Generated artifact; use its owning generator',
     data: 'Visualization fixture; preserve source data' }[role]) || `${role}: ${path}`;
-  return { path, role, purpose, layer: role, exports: [...text.matchAll(/export function (\w+)/g)].map((match) => match[1]),
-    depends_on: [...text.matchAll(/(?:from\s+|require\()['"]([^'"]+)['"]/g)].map((match) => match[1]),
+  const source = /\.(?:[cm]?js)$/.test(path) && readable ? text : '';
+  const cjsExports = source.match(/module\.exports\s*=\s*\{([^}]+)\}/)?.[1].split(',').map((name) => name.trim()).filter(Boolean) || [];
+  return { path, role, purpose, layer: role, exports: [...new Set([...source.matchAll(/export function (\w+)/g)].map((match) => match[1]).concat(cjsExports))],
+    depends_on: [...source.matchAll(/(?:from\s+|require\()['"]([^'"]+)['"]/g)].map((match) => match[1]),
     patterns: role === 'generated' ? ['generated'] : [], provenance: title ? `[src: ${path}]` : '[asserted]' };
 }
 
@@ -52,7 +60,7 @@ export function buildOutputs(root = ROOT) {
     ...Object.entries(packageJson.scripts).map(([name, command]) => `npm run ${name}: ${command}. [src: package.json#scripts]`),
   ];
   const index = { generator: 'scripts/check-doc-indexes.mjs', files };
-  const toc = files.map((file) => `| [${file.path}](../${file.path}) | ${file.role} | ${file.purpose.replace(/\|/g, '\\|')} |`).join('\n');
+  const toc = files.map((file) => `| [${markdownText(file.path)}](../${linkPath(file.path)}) | ${file.role} | ${markdownText(file.purpose)} |`).join('\n');
   const small = header + '# json-3d-renderer\n\n' + facts.join('\n') + '\n';
   return new Map([
     [OUTPUTS[0], JSON.stringify(index, null, 2) + '\n'],

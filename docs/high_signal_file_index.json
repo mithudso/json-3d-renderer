@@ -301,9 +301,7 @@
       "purpose": "Components & data schemas",
       "layer": "documentation",
       "exports": [],
-      "depends_on": [
-        "./lib/concept-graph.cjs"
-      ],
+      "depends_on": [],
       "patterns": [],
       "provenance": "[src: docs/COMPONENTS.md]"
     },
@@ -674,7 +672,9 @@
       "role": "tooling",
       "purpose": "tooling: inject-data.js",
       "layer": "tooling",
-      "exports": [],
+      "exports": [
+        "main"
+      ],
       "depends_on": [
         "node:fs",
         "node:path",
@@ -688,8 +688,13 @@
       "role": "library",
       "purpose": "library: lib/concept-graph.cjs",
       "layer": "library",
-      "exports": [],
-      "depends_on": [],
+      "exports": [
+        "buildGraph",
+        "renderHtml"
+      ],
+      "depends_on": [
+        "acorn"
+      ],
       "patterns": [],
       "provenance": "[asserted]"
     },
@@ -835,7 +840,6 @@
       ],
       "depends_on": [
         "node:fs",
-        "node:crypto",
         "node:path",
         "node:url"
       ],
@@ -918,6 +922,8 @@
         "node:module",
         "node:vm",
         "./lib/concept-graph.cjs",
+        "./lib/concept-graph.cjs",
+        "./lib/concept-graph.cjs",
         "./lib/concept-graph.cjs"
       ],
       "patterns": [],
@@ -928,11 +934,15 @@
       "role": "test",
       "purpose": "test: test/maintenance.test.js",
       "layer": "test",
-      "exports": [],
+      "exports": [
+        "fictional",
+        "real"
+      ],
       "depends_on": [
         "node:test",
         "node:assert/strict",
         "node:fs",
+        "node:module",
         "node:os",
         "node:path",
         "node:child_process",

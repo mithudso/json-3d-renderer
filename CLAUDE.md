@@ -8,7 +8,7 @@ Run the checks below after changes. Do not invent commands or services.
 
 ## Repository shape
 
-This is one dependency-free Node package plus static browser artifacts. `package.json`
+This is one Node package with no runtime npm dependencies plus static browser artifacts. `package.json`
 is the canonical version. `inject-data.js` is a local generator; `lib/` contains its pure
 conversion helpers. `scripts/` contains verification and maintenance CLIs. `test/` contains
 Node tests. `examples/` and root HTML pages are generated output. `docs/` contains the
@@ -53,7 +53,7 @@ See [docs/COMPONENTS.md](docs/COMPONENTS.md) for the library API.
   upstream library update is the requested task.
 - Root demos use sibling library paths; `examples/` demos use `../` paths.
 - Keep tests synthetic and isolated. Never import private hub data during validation.
-- Node tools use built-ins only. Root `.js` is CommonJS; `test/*.js` uses ESM through
+- Node tools use built-ins plus the pinned Acorn development dependency for template parsing. Root `.js` is CommonJS; `test/*.js` uses ESM through
   `test/package.json`; `.mjs` and `.cjs` are explicit.
 - Update retrieval artifacts with `npm run docs:update`; CI rejects drift.
 - Never start indexing, embeddings, daemons or live integrations to explore this repo.

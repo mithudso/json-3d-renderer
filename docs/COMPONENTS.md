@@ -112,7 +112,7 @@ vector. See [.github/SECURITY.md](../.github/SECURITY.md).
 
 ## Local conversion library — `lib/concept-graph.cjs`
 
-This CommonJS module uses no dependencies or filesystem I/O. It exports:
+This CommonJS module uses pinned Acorn for parsing and performs no filesystem I/O. It exports:
 
 - `buildGraph(tree)`: accepts a concept-array, returns `{nodes, links}` without mutating input.
   Each record needs a nonblank string `concept`. `parentConcept` is a string, null or absent;
@@ -121,8 +121,8 @@ This CommonJS module uses no dependencies or filesystem I/O. It exports:
   own branch; deeper descendants inherit that branch's color. Missing parents create fragments
   with no invalid link endpoint. Node sizing and palette are centralized in this module.
 - `renderHtml(html, graph)`: accepts a trusted HTML template and a graph returned by `buildGraph`.
-  Requires exactly one JSON-object `const DATA = ...;` declaration. Scans quoted strings before
-  replacement and escapes `<`, U+2028 and U+2029 in serialized JSON. Throws on invalid templates.
+  Requires exactly one top-level JSON-object `const DATA = ...` declaration in classic inline
+  scripts or bare JavaScript. Acorn determines its expression boundaries without evaluation before replacement and escapes `<`, U+2028 and U+2029 in serialized JSON. Throws on invalid templates.
   The template and its HTML tooltip code remain trusted; this is not an arbitrary HTML sanitizer.
 
 ```js

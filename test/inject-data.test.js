@@ -73,6 +73,17 @@ test('descendants keep their top-level branch color', () => {
   assert.equal(graph.nodes[1].color, graph.nodes[2].color);
 });
 
+test('DATA declaration text inside strings, comments and regex literals is data', () => {
+  const { buildGraph, renderHtml } = require('./lib/concept-graph.cjs');
+  const template = '<p>It\'s a template</p><script>' +
+    'const pattern = /["\']/; const label = "const DATA = "; /* const DATA = {}; */\n' +
+    'const DATA = {"note":"const DATA = "};</script>';
+  const first = renderHtml(template, buildGraph([node('const DATA = ')]));
+  const second = renderHtml(first, buildGraph([node('replacement')]));
+  assert.match(second, /"name":"replacement"/);
+  assert.match(second, /const label = "const DATA = "/);
+});
+
 test('malformed records and duplicate ids fail without mutating input', () => {
   const { buildGraph } = require('./lib/concept-graph.cjs');
   for (const input of [{}, [null], [node('')], [node('x'), node('x')],
@@ -124,4 +135,14 @@ test('real CLI creates output once, reports outcomes, and protects existing file
     assert.ok(!failed.stderr.includes('private-fixture-content'));
     assert.ok(!existsSync(join(dir, 'invalid.html')));
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('parser selects DATA after return-regex and handles quoted script attributes', () => {
+  const { buildGraph, renderHtml } = require('./lib/concept-graph.cjs');
+  for (const opening of ['<script>', '<script data-note=">">']) {
+    const template = opening + 'function pattern(){ return /const DATA = {};/; } const DATA = {};</script>';
+    const rendered = renderHtml(template, buildGraph([node('actual')]));
+    const code = rendered.slice(opening.length, -'</script>'.length);
+    assert.equal(vm.runInNewContext(code + '\nDATA').nodes[0].name, 'actual');
+  }
 });
