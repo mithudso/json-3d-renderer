@@ -3,7 +3,7 @@
 Clone this repository to view its static demos. A modern browser with WebGL is sufficient
 for 3D rendering; Python 3 can serve files locally. Node 24.22.3 is the pinned maintainer
 runtime. No runtime npm dependencies exist. Install development dependencies with `npm ci`
-before using the checkout generator; it uses Acorn 8.19.0 for template parsing.
+before using the checkout generator; it uses Acorn 8.19.0 and parse5 7.3.0 for template parsing.
 
 ```sh
 npm ci --ignore-scripts

@@ -47,9 +47,9 @@ sources remain bounded exclusions. Test counts are behavioral receipts, not cove
 
 The final inventory has88 paths. The task owns58 changed files (24 existing,34 new).
 No baseline source was omitted or truncated. New code and all12 maintained executable/config
-review targets were read in full in fresh contexts. Final blind gate2 passed all18 passes with
-no corroborated Medium+ finding. The first blind dissent and every correction remain visible
-in the optimizer report. The final20 tests check behavior; no numeric coverage is claimed.
+review targets were read in full in fresh contexts. Blind gate2 passed all18 passes before the final CodeQL HTML-parser finding. That finding
+was repaired with parse5 and reviewed separately; no third blind gate is claimed. The first blind dissent and every correction remain visible
+in the optimizer report. The final22 tests check behavior; no numeric coverage is claimed.
 
 | Task-owned file | Disposition |
 |---|---|

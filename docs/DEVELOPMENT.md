@@ -3,7 +3,7 @@
 ## Prerequisites and setup
 
 Use Node 24.22.3 from `.nvmrc` for maintenance. The package retains Node >=18 compatibility;
-CI checks Node 18 and the pinned Node 24 runtime. Tests use Node built-ins; the checkout generator uses pinned Acorn for template parsing.
+CI checks Node 18 and the pinned Node 24 runtime. Tests use Node built-ins; the checkout generator uses pinned Acorn and parse5 for template parsing.
 A modern browser with WebGL displays 3D demos. Python 3 is optional for local HTTP serving.
 
 ```sh

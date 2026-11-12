@@ -7,7 +7,7 @@ directories and synthetic input. They never read live hub data or start services
 | Suite | Command | Behavior covered |
 |---|---|---|
 | Bundle verifier | `node --test test/verify-copy.test.js` | Equal bytes, same-length corruption, missing file, usage, complete piped output |
-| Generator | `node --test test/inject-data.test.js` | Cycles, prototype keys, unsafe names, DATA string delimiters, branch colors, malformed records, deep ancestry, regex/attribute parsing, serialization and real CLI file/log outcomes |
+| Generator | `node --test test/inject-data.test.js` | Cycles, prototype keys, unsafe names, DATA string delimiters, branch colors, malformed records, deep ancestry, regex/attribute parsing, browser end tags, commented/inert scripts, serialization and real CLI file/log outcomes |
 | Maintenance | `node --test test/maintenance.test.js` | Unicode/newline paths, ignored/deleted paths, deterministic indexes, log archival, private modes, concurrent appends, atomic saves, retirement-gap writers, temporary ownership and editor swap protection |
 
 `npm run lint` parses every non-ignored JSON file and runs `node --check` on every

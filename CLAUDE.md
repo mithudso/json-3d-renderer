@@ -53,7 +53,7 @@ See [docs/COMPONENTS.md](docs/COMPONENTS.md) for the library API.
   upstream library update is the requested task.
 - Root demos use sibling library paths; `examples/` demos use `../` paths.
 - Keep tests synthetic and isolated. Never import private hub data during validation.
-- Node tools use built-ins plus the pinned Acorn development dependency for template parsing. Root `.js` is CommonJS; `test/*.js` uses ESM through
+- Node tools use built-ins plus pinned Acorn and parse5 development dependencies for template parsing. Root `.js` is CommonJS; `test/*.js` uses ESM through
   `test/package.json`; `.mjs` and `.cjs` are explicit.
 - Update retrieval artifacts with `npm run docs:update`; CI rejects drift.
 - Never start indexing, embeddings, daemons or live integrations to explore this repo.

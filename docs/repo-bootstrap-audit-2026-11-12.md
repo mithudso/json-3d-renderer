@@ -28,7 +28,7 @@ empirical mode is N/A; cannot auto-improve. No champion or embeddings were creat
 | Agent catalog | No local agent definitions | Existing AGENTS catalog retained; no invented agents |
 | Workflow log size | Restored logs are far below 200 KiB | Archive directory and guarded, tested rotation tool added |
 | Editor and VCS metadata | Existing editorconfig/gitattributes/gitignore | Retained formatting/binary rules; ignored package archives and rotation temporaries |
-| Node pin / lock | `engines >=18`, no runtime pin or lockfile | Node 24.22.3 maintainer pin and lockfile with exact Acorn 8.19.0 development dependency; preserve Node >=18 compatibility |
+| Node pin / lock | `engines >=18`, no runtime pin or lockfile | Node 24.22.3 maintainer pin and lockfile with exact Acorn 8.19.0 and parse5 7.3.0 development dependencies (CommonJS compatibility hold on parse5); preserve Node >=18 compatibility |
 | Environment and editor | No env reads or editor runtime config | Comment-only `.env.example`; local editor settings/extensions and verifier debug config |
 | MCP config | No MCP dependency or runtime | N/A; documented in MCP.md; no fictional `.mcp.json` or editor MCP server |
 | CI | Only JSON parsing; quoted Git paths could fail | Node 18/24 matrix runs tests, syntax/JSON validation, metadata drift; read-only permissions and SHA-pinned actions |
@@ -53,6 +53,8 @@ empirical mode is N/A; cannot auto-improve. No champion or embeddings were creat
 ## Validation and convergence
 
 Six generator counterexamples failed against the original source and passed after correction.
+A later CodeQL HTML-boundary finding was corrected with parse5 and two additional regressions.
+The two blind gates predate that final repair; the optimizer report retains this assurance limit.
 Final local gates and independent review results are recorded in
 [the optimizer report](code-deep-optimizer-2026-11-12.md). No source cap was applied. Retained
 static/generated/vendor exclusions do not assert a browser audit or a dependency security clean bill.

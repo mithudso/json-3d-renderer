@@ -15,12 +15,15 @@ Low/Nit totals are zero because cosmetic preferences were not promoted to findin
 | 1 — baseline / repository sweep | 0 | 3 | 12 | 0 | 0 | Corrected; behavior counterexamples and bootstrap gaps addressed |
 | 2 — complete maintained-source reviews / CI | 0 | 1 | 5 | 0 | 0 | Corrected; CodeQL escaping and new-tool counterexamples |
 | 3 — first blind dissent and metadata cross-check | 2 | 0 | 3 | 0 | 0 | Corrected; parser, live-file retirement, temporary ownership, metadata boundaries |
+| 4 — final CodeQL HTML boundary | 0 | 1 | 0 | 0 | 0 | Replaced HTML regex with parse5; red/green browser-boundary tests |
 | Final loop | 0 | 0 | 0 | 0 | 0 | Local gates pass; final blind result below |
 
 The canonical convergence checker compared iteration snapshots, not a self-estimated edit distance.
-The canonical final comparison returned CLEAN with edit-distance ratio0.2559 and5 closed
-Medium+ findings. A zero Medium+ loop result is only a candidate until the blind gate passes. The first blind gate
-failed and caused the final corrective iteration. The final gate is bounded to the maintained code;
+Round4 returned zero Medium+ with edit-distance ratio0.2217; this mechanical result does not
+remove the final blind-review limit recorded below.
+A zero Medium+ loop result is only a candidate until the blind gate passes. The first blind gate
+failed and caused round3. Gate2 passed before CodeQL identified one further HTML-extraction
+defect. Round4 corrected it. The two-blind-gate limit remains visible; no third gate is claimed. The final gate is bounded to the maintained code;
 generated browser code, bundle internals and absent upstream generators remain excluded.
 
 ## 2. Findings and fixes
@@ -50,7 +53,8 @@ Closely related repository bootstrap findings are grouped; no generated artifact
 | P2 | scripts/rotate-workflow-logs.mjs:34 @79dabd7 | Medium | Concurrent appends disappear from both files | Preserve retired inode and initial snapshot | Fixed; in-flight append regression |
 | S1/S3 | scripts/rotate-workflow-logs.mjs:27 @79dabd7 | Medium | Private logs become world readable | Private archive directory and source modes | Fixed; mode0600 assertions |
 | S4/T1 | test/verify-copy.test.js:39 @79dabd7 | Medium | Long repeated absolute args hit macOS E2BIG | Short relative fixture args retain pipe-pressure coverage | Fixed |
-| S1 | scripts/check-doc-indexes.mjs:55 @79dabd7 | High | CodeQL finds incomplete Markdown escaping | Escape backslashes/Markdown and HTML; encode link segments | Fixed; final pushed CI recorded in delivery receipt |
+| S1 | scripts/check-doc-indexes.mjs:55 @79dabd7 | High | CodeQL finds incomplete Markdown escaping | Escape backslashes/Markdown and HTML; encode link segments | Fixed locally; final CI required |
+| S1/S3 | lib/concept-graph.cjs:64 @b0e949d | High | HTML regex misses browser end-tag variants and sees commented scripts | parse5 HTML source locations, with bare-JS and inert-template boundaries | Fixed; browser-boundary regressions |
 | C1/C3 | lib/concept-graph.cjs, pre-round3 scanner | Critical | Regex after return can become the selected DATA; quoted `>` breaks script extraction | Pinned Acorn8.19.0 parses top-level initializers; quoted attribute extraction | Fixed; execute rendered synthetic JS |
 | P2/S2 | scripts/rotate-workflow-logs.mjs, pre-round3 replacement | Critical | Editor atomic save replaces inode A with B; archiveA plus rename discards B | Retire current live path, detect changes, restore exclusively; never overwrite competitor | Fixed; atomic-save and gap-writer regressions |
 | S2/P2 | scripts/rotate-workflow-logs.mjs, pre-round3 finally | Medium | EEXIST on temporary creation deletes another owner's temporary | Own paths in a new private directory; cleanup only owned temporary | Fixed; sentinel preserved |
@@ -67,12 +71,12 @@ New lint means JSON parse and maintained-JS syntax checks, not an ESLint or type
 
 | Command / experiment | Baseline | Final local | Verdict |
 |---|---|---|---|
-| npm test | 1 pass; implicit ESM warning on Node26.7.0 | 20 pass; no failures | PASS |
+| npm test | 1 pass; implicit ESM warning on Node26.7.0 | 22 pass; no failures | PASS |
 | node --check (original3); npm run lint (final) | 3 syntax / 7JSON pass | 9 maintained JS / 14JSON pass | PASS |
 | npm run docs:check | Absent; 3 dead indexed paths | Complete deterministic88-path output | PASS |
 | npm ci --ignore-scripts | No lockfile | Pinned development dependency install | PASS |
 | npm audit --json | ENOLOCK | Zero registry-reported vulnerabilities | PASS within npm dependency scope |
-| npm outdated --json | {} | {} | PASS at audit time |
+| npm outdated --json | {} | parse5 7.3.0 held below ESM-only8.1.1 for CommonJS/Node18 compatibility | Intentional compatibility hold; documented |
 | npm pack --dry-run --json | Existing package contract inspected | 5 intended package files; no private source | PASS |
 | Synthetic generation with actual root template | Cycle/serialization counterexamples fail | 3nodes / 2links in disposable batch output | PASS |
 | Asset hash and data-copy comparison | 21 preserved assets snapshotted | All21 hashes match; root/examples JSON identical | PASS |
@@ -102,7 +106,10 @@ that a source-only reviewer explicitly marked unassessed. The independent blind 
 not a substitute for missing per-file bundles. Final maintained universe includes9 JS files,
 2 package scopes and the CI workflow. All supplied source was read without file truncation.
 
-T2 facts: npm registry reports Acorn8.19.0, MIT, pinned exactly with integrity in the lockfile.
+T2 facts: npm registry reports Acorn8.19.0 and parse5 7.3.0, MIT, pinned exactly with integrity in the lockfile.
+parse5 brings one locked entities dependency. parse5 8.1.1 is ESM-only; version7.3.0 retains
+the require export required by the Node18-compatible CommonJS tool. `npm outdated` therefore
+reports one intentional major-version hold. `npm audit` reports zero vulnerabilities.
 No npm runtime dependencies or install scripts were added. Opaque vendored libraries remain
 outside npm audit; D3 banner is7.9.0 and the 3D bundle lacks reproducible build provenance.
 GitHub tag resolution pins checkoutv7 and setup-nodev6 by SHA. Official Node distribution index
@@ -593,7 +600,7 @@ Documentation/metadata excerpt: 28 diff lines omitted.
 ````diff
 --- a/docs/COMPONENTS.md
 +++ b/docs/COMPONENTS.md
-@@ -108,3 +108,41 @@
+@@ -108,3 +108,42 @@
  When a graph is generated from data you don't control, the `desc` and any URL fields are
  **untrusted** and must be escaped before being inserted into the DOM, or they become an XSS
  vector. See [.github/SECURITY.md](../.github/SECURITY.md).
@@ -601,7 +608,7 @@ Documentation/metadata excerpt: 28 diff lines omitted.
 +
 +## Local conversion library — `lib/concept-graph.cjs`
 +
-+This CommonJS module uses pinned Acorn for parsing and performs no filesystem I/O. It exports:
++This CommonJS module uses pinned Acorn and parse5 for parsing and performs no filesystem I/O. It exports:
 +
 +- `buildGraph(tree)`: accepts a concept-array, returns `{nodes, links}` without mutating input.
 +  Each record needs a nonblank string `concept`. `parentConcept` is a string, null or absent;
@@ -611,7 +618,8 @@ Documentation/metadata excerpt: 28 diff lines omitted.
 +  with no invalid link endpoint. Node sizing and palette are centralized in this module.
 +- `renderHtml(html, graph)`: accepts a trusted HTML template and a graph returned by `buildGraph`.
 +  Requires exactly one top-level JSON-object `const DATA = ...` declaration in classic inline
-+  scripts or bare JavaScript. Acorn determines its expression boundaries without evaluation before replacement and escapes `<`, U+2028 and U+2029 in serialized JSON. Throws on invalid templates.
++  scripts or bare JavaScript. parse5 locates live script bodies and ignores HTML comments and inert
++  template contents. Acorn determines initializer boundaries without evaluation before replacement and escapes `<`, U+2028 and U+2029 in serialized JSON. Throws on invalid templates.
 +  The template and its HTML tooltip code remain trusted; this is not an arbitrary HTML sanitizer.
 +
 +```js
@@ -630,10 +638,9 @@ Documentation/metadata excerpt: 28 diff lines omitted.
 +|---|---|
 +| `scripts/verify-copy.mjs` | CLI paths; hashes reference/copies; exit 0 equal, 1 mismatch/read error, 2 usage |
 +| `scripts/check-repo.mjs` | CLI without args; parse JSON and syntax-check maintained JS; exit nonzero on failure |
-+| `scripts/check-doc-indexes.mjs` | CLI check or `--write`; exports `repositoryFiles(root)` and `buildOutputs(root)` for deterministic local metadata |
 ````
 
-Documentation/metadata excerpt: 4 diff lines omitted.
+Documentation/metadata excerpt: 5 diff lines omitted.
 
 ### docs/DEVELOPMENT.md
 
@@ -660,7 +667,7 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 -The demo pages load a rendering library by relative path, so serve the repo over HTTP rather
 -than opening `file://` URLs:
 +Use Node 24.22.3 from `.nvmrc` for maintenance. The package retains Node >=18 compatibility;
-+CI checks Node 18 and the pinned Node 24 runtime. Tests use Node built-ins; the checkout generator uses pinned Acorn for template parsing.
++CI checks Node 18 and the pinned Node 24 runtime. Tests use Node built-ins; the checkout generator uses pinned Acorn and parse5 for template parsing.
 +A modern browser with WebGL displays 3D demos. Python 3 is optional for local HTTP serving.
 
  ```sh
@@ -693,7 +700,7 @@ Documentation/metadata excerpt: 89 diff lines omitted.
 +Clone this repository to view its static demos. A modern browser with WebGL is sufficient
 +for 3D rendering; Python 3 can serve files locally. Node 24.22.3 is the pinned maintainer
 +runtime. No runtime npm dependencies exist. Install development dependencies with `npm ci`
-+before using the checkout generator; it uses Acorn 8.19.0 for template parsing.
++before using the checkout generator; it uses Acorn 8.19.0 and parse5 7.3.0 for template parsing.
 +
 +```sh
 +npm ci --ignore-scripts
@@ -733,7 +740,7 @@ Documentation/metadata excerpt: 89 diff lines omitted.
 ````diff
 --- a/docs/SECURITY.md
 +++ b/docs/SECURITY.md
-@@ -0,0 +1,41 @@
+@@ -0,0 +1,42 @@
 +# Security
 +
 +## Boundaries and principals
@@ -761,8 +768,9 @@ Documentation/metadata excerpt: 89 diff lines omitted.
 +
 +MD5 in the copy verifier is an accidental-drift check, not a cryptographic authenticity guarantee.
 +The vendored 3D bundle has no reproducible build manifest here; its full transitive dependency
-+security status is unknown. D3 identifies v7.9.0 in its banner. No runtime npm dependencies exist. Acorn 8.19.0 is a pinned MIT development dependency
-+used to parse trusted templates without evaluation. `npm audit` checks this dependency, not
++security status is unknown. D3 identifies v7.9.0 in its banner. No runtime npm dependencies exist. Acorn 8.19.0 and parse5 7.3.0 are pinned MIT development dependencies
++used to parse trusted templates without evaluation. parse5 7 retains CommonJS support for Node18;
++the newer ESM-only major is intentionally held. `npm audit` checks this dependency, not
 +the opaque vendored browser libraries.
 +
 +## Secrets and incident response
@@ -770,10 +778,9 @@ Documentation/metadata excerpt: 89 diff lines omitted.
 +No environment variables or secrets are required. Never commit credentials, source data from
 +private hubs, customer exports or diagnostic payloads. Review generated HTML and metadata before
 +publishing. Stop sharing an affected artifact, preserve evidence locally, and use the reporting
-+instructions in [.github/SECURITY.md](../.github/SECURITY.md). No response SLA or compliance
 ````
 
-Documentation/metadata excerpt: 4 diff lines omitted.
+Documentation/metadata excerpt: 5 diff lines omitted.
 
 ### docs/TESTING.md
 
@@ -790,8 +797,8 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 +| Suite | Command | Behavior covered |
 +|---|---|---|
 +| Bundle verifier | `node --test test/verify-copy.test.js` | Equal bytes, same-length corruption, missing file, usage, complete piped output |
-+| Generator | `node --test test/inject-data.test.js` | Cycles, prototype keys, unsafe names, DATA string delimiters, branch colors, malformed records, deep ancestry, serialization and real CLI file/log outcomes |
-+| Maintenance | `node --test test/maintenance.test.js` | Unicode/newline paths, ignored/deleted paths, deterministic indexes, log archival, private modes, concurrent appends and editor swap protection |
++| Generator | `node --test test/inject-data.test.js` | Cycles, prototype keys, unsafe names, DATA string delimiters, branch colors, malformed records, deep ancestry, regex/attribute parsing, browser end tags, commented/inert scripts, serialization and real CLI file/log outcomes |
++| Maintenance | `node --test test/maintenance.test.js` | Unicode/newline paths, ignored/deleted paths, deterministic indexes, log archival, private modes, concurrent appends, atomic saves, retirement-gap writers, temporary ownership and editor swap protection |
 +
 +`npm run lint` parses every non-ignored JSON file and runs `node --check` on every
 +maintained JS/CJS/MJS file. Vendored minified libraries are excluded from syntax rewriting
@@ -1133,7 +1140,7 @@ Documentation/metadata excerpt: 320 diff lines omitted.
 ````diff
 --- a/docs/maintenance-coverage-2026-11-12.md
 +++ b/docs/maintenance-coverage-2026-11-12.md
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,113 @@
 +# Maintenance coverage — 2026-11-12
 +
 +Baseline `538c056` has 54 tracked files. The census used NUL-delimited Git enumeration, not
@@ -1173,7 +1180,7 @@ Documentation/metadata excerpt: 320 diff lines omitted.
 +## Exclusions and limits
 ````
 
-Documentation/metadata excerpt: 7 diff lines omitted.
+Documentation/metadata excerpt: 76 diff lines omitted.
 
 ### docs/onboarding.md
 
@@ -1230,7 +1237,7 @@ Documentation/metadata excerpt: 7 diff lines omitted.
 +| Agent catalog | No local agent definitions | Existing AGENTS catalog retained; no invented agents |
 +| Workflow log size | Restored logs are far below 200 KiB | Archive directory and guarded, tested rotation tool added |
 +| Editor and VCS metadata | Existing editorconfig/gitattributes/gitignore | Retained formatting/binary rules; ignored package archives and rotation temporaries |
-+| Node pin / lock | `engines >=18`, no runtime pin or lockfile | Node 24.22.3 maintainer pin and lockfile with exact Acorn 8.19.0 development dependency; preserve Node >=18 compatibility |
++| Node pin / lock | `engines >=18`, no runtime pin or lockfile | Node 24.22.3 maintainer pin and lockfile with exact Acorn 8.19.0 and parse5 7.3.0 development dependencies (CommonJS compatibility hold on parse5); preserve Node >=18 compatibility |
 +| Environment and editor | No env reads or editor runtime config | Comment-only `.env.example`; local editor settings/extensions and verifier debug config |
 +| MCP config | No MCP dependency or runtime | N/A; documented in MCP.md; no fictional `.mcp.json` or editor MCP server |
 +| CI | Only JSON parsing; quoted Git paths could fail | Node 18/24 matrix runs tests, syntax/JSON validation, metadata drift; read-only permissions and SHA-pinned actions |
@@ -1246,7 +1253,7 @@ Documentation/metadata excerpt: 38 diff lines omitted.
 ````diff
 --- a/docs/requirements.md
 +++ b/docs/requirements.md
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,23 @@
 +# Requirements
 +
 +## Functional
@@ -1260,13 +1267,15 @@ Documentation/metadata excerpt: 38 diff lines omitted.
 +
 +## Non-functional
 +
-+Use Node built-ins for tooling, with pinned Acorn for reliable JavaScript declaration parsing. Keep CLI diagnostics useful without source-data disclosure.
++Use Node built-ins for tooling, with pinned Acorn and parse5 for reliable JavaScript and HTML parsing. Keep CLI diagnostics useful without source-data disclosure.
 +Resolve ancestry iteratively; do not impose an invented rendering-latency or memory SLA. Require a
 +modern WebGL-capable browser for 3D views; no numeric GPU or hardware minimum has been measured.
 +
 +The package advertises Node >=18 compatibility, tests Node 18 and 24 in CI, and pins maintainer
 +Node 24.22.3 in `.nvmrc`. Git is required by inventory tooling. Python 3 is optional for serving.
-+No npm runtime dependencies exist. The checkout generator uses Acorn 8.19.0 (MIT) as a pinned development dependency. Vendored D3 v7.9.0 and the opaque 3D bundle are
++No npm runtime dependencies exist. The checkout generator uses pinned Acorn 8.19.0 and parse5 7.3.0 development dependencies (MIT).
++parse5 7 preserves CommonJS support for Node18; parse5 8.1.1 is ESM-only. The lockfile pins
++its entities dependency. This compatibility pin is an intentional major-version hold. Vendored D3 v7.9.0 and the opaque 3D bundle are
 +tracked assets; their upstream build inputs are absent. See [known-issues.md](known-issues.md).
 ````
 
@@ -1498,8 +1507,9 @@ Documentation/metadata excerpt: 38 diff lines omitted.
 ````diff
 --- a/lib/concept-graph.cjs
 +++ b/lib/concept-graph.cjs
-@@ -0,0 +1,89 @@
+@@ -0,0 +1,108 @@
 +const { parse } = require('acorn');
++const { parse: parseHtml } = require('parse5');
 +
 +const COLORS = Object.freeze([
 +  '#ffffff', 'hsl(0, 62%, 60%)', 'hsl(138, 62%, 60%)', 'hsl(275, 62%, 60%)',
@@ -1559,16 +1569,34 @@ Documentation/metadata excerpt: 38 diff lines omitted.
 +}
 +
 +/** Replace exactly one top-level const DATA JSON object in a trusted classic script.
-+ * Acorn supplies expression boundaries without executing any template code.
++ * parse5 supplies HTML locations; Acorn supplies JS boundaries without executing code.
 + */
 +function renderHtml(html, graph) {
-+  const scripts = [...html.matchAll(/(<script\b(?:[^>"']|"[^"]*"|'[^']*')*>)([\s\S]*?)<\/script\s*>/gi)];
-+  const blocks = scripts.length ? scripts.map((match) => ({
-+    code: match[2], offset: match.index + match[1].length,
-+  })) : [{ code: html, offset: 0 }];
++  const options = { ecmaVersion: 'latest', sourceType: 'script' };
++  let blocks;
++  try {
++    const program = parse(html, options);
++    // Annex B HTML-style comments can consume a whole HTML document as empty JS.
++    if (!program.body.length) throw new TypeError('Expected a bare JavaScript program');
++    blocks = [{ program, code: html, offset: 0 }];
++  } catch {
++    blocks = [];
++    const pending = [parseHtml(html, { sourceCodeLocationInfo: true })];
++    while (pending.length) {
++      const node = pending.pop();
++      if (node.tagName === 'script') {
++        const location = node.sourceCodeLocation;
++        if (!location?.endTag) throw new TypeError('Expected a closed script element');
++        const offset = location.startTag.endOffset;
++        const code = html.slice(offset, location.endTag.startOffset);
++        blocks.push({ program: parse(code, options), code, offset });
++      }
++      // Template contents are inert and live outside childNodes; do not inspect them.
++      for (const child of node.childNodes || []) pending.push(child);
++    }
++  }
 +  const declarations = [];
-+  for (const { code, offset } of blocks) {
-+    const program = parse(code, { ecmaVersion: 'latest', sourceType: 'script' });
++  for (const { program, code, offset } of blocks) {
 +    for (const statement of program.body) {
 +      if (statement.type !== 'VariableDeclaration' || statement.kind !== 'const') continue;
 +      for (const declaration of statement.declarations) {
@@ -1776,17 +1804,21 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 ````diff
 --- a/memory.md
 +++ b/memory.md
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,16 @@
 +# json-3d-renderer Memory Log
 +
 +## v0.1.1 - 2026-11-12
 +
-+- Active task: November 12 repository bootstrap and full code optimizer maintenance.
++- Task: November 12 repository bootstrap and full code optimizer maintenance.
 +- Completed: hardened the local generator; extracted tested conversion helpers; protected
 +  bundle-verifier output; added behavior regressions, CI validation, deterministic retrieval
 +  indexes, workflow-log rotation and the maintained documentation suite.
 +- Preserved: generated demos, data snapshots, screenshots and opaque vendored libraries.
-+- In progress: verify final PR checks and remote-default delivery; see the dated audit reports.
++- Validation:22 behavior tests, JSON/syntax validation, metadata drift checks pass. The two blind gates ran before the final CodeQL HTML-parser repair;
++  the optimizer report retains that bounded assurance limit. Acorn8.19.0 and parse5 replace handwritten JavaScript/HTML scanning; rotation preserves
++  editor atomic saves and in-flight appends.
++- Delivery: [PR5](https://github.com/mithudso/json-3d-renderer/pull/5); the batch receipt records
++  final GitHub checks, verified merge identity and checkout cleanup.
 +- Next steps: original upstream generators and vendored build provenance remain unavailable.
 +  Do not run embeddings or import private hub data without an explicit separate request.
 ````
@@ -1796,7 +1828,7 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 ````diff
 --- a/package-lock.json
 +++ b/package-lock.json
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,62 @@
 +{
 +  "name": "@mithudso/json-3d-renderer",
 +  "version": "0.1.1",
@@ -1811,7 +1843,8 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 +        "json-3d-verify-copy": "scripts/verify-copy.mjs"
 +      },
 +      "devDependencies": {
-+        "acorn": "8.19.0"
++        "acorn": "8.19.0",
++        "parse5": "7.3.0"
 +      },
 +      "engines": {
 +        "node": ">=18"
@@ -1829,6 +1862,32 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 +      "engines": {
 +        "node": ">=0.4.0"
 +      }
++    },
++    "node_modules/entities": {
++      "version": "6.0.1",
++      "resolved": "https://registry.npmjs.org/entities/-/entities-6.0.1.tgz",
++      "integrity": "sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==",
++      "dev": true,
++      "license": "BSD-2-Clause",
++      "engines": {
++        "node": ">=0.12"
++      },
++      "funding": {
++        "url": "https://github.com/fb55/entities?sponsor=1"
++      }
++    },
++    "node_modules/parse5": {
++      "version": "7.3.0",
++      "resolved": "https://registry.npmjs.org/parse5/-/parse5-7.3.0.tgz",
++      "integrity": "sha512-IInvU7fabl34qmi9gY8XOVxhYyMyuH2xUNpb2q8/Y+7552KlejkRvqvD19nMoUW/uQGGbqNpA6Tufu5FL5BZgw==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "entities": "^6.0.0"
++      },
++      "funding": {
++        "url": "https://github.com/inikulin/parse5?sponsor=1"
++      }
 +    }
 +  }
 +}
@@ -1839,7 +1898,7 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 ````diff
 --- a/package.json
 +++ b/package.json
-@@ -1,16 +1,36 @@
+@@ -1,16 +1,37 @@
  {
    "name": "@mithudso/json-3d-renderer",
 -  "version": "0.1.0",
@@ -1879,7 +1938,8 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 +    "logs:rotate": "node scripts/rotate-workflow-logs.mjs"
 +  },
 +  "devDependencies": {
-+    "acorn": "8.19.0"
++    "acorn": "8.19.0",
++    "parse5": "7.3.0"
    }
  }
 ````
@@ -2211,7 +2271,7 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 ````diff
 --- a/test/inject-data.test.js
 +++ b/test/inject-data.test.js
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,169 @@
 +import { test } from 'node:test';
 +import assert from 'node:assert/strict';
 +import { readFileSync, mkdtempSync, writeFileSync, existsSync, rmSync } from 'node:fs';
@@ -2359,6 +2419,27 @@ Documentation/metadata excerpt: 4 diff lines omitted.
 +    const code = rendered.slice(opening.length, -'</script>'.length);
 +    assert.equal(vm.runInNewContext(code + '\nDATA').nodes[0].name, 'actual');
 +  }
++});
++
++test('HTML extraction follows browser end tags and ignores commented scripts', () => {
++  const { buildGraph, renderHtml } = require('./lib/concept-graph.cjs');
++  for (const closing of ['</script foo="bar">', '</script\t\n bar>']) {
++    const template = '<!-- <script>const DATA = {};</script> --><script>const DATA = {};' + closing;
++    const rendered = renderHtml(template, buildGraph([node('browser-boundary')]));
++    assert.match(rendered, /"name":"browser-boundary"/);
++    assert.ok(rendered.startsWith('<!-- <script>const DATA = {};</script> -->'));
++    assert.ok(rendered.endsWith(closing));
++  }
++});
++
++test('bare JavaScript strings and inert template scripts cannot create HTML declarations', () => {
++  const { buildGraph, renderHtml } = require('./lib/concept-graph.cjs');
++  const bare = 'const DATA = {"note":"<script>"};';
++  assert.match(renderHtml(bare, buildGraph([node('bare')])), /"name":"bare"/);
++  const template = '<template><script>const DATA = {};</script></template><script>const DATA = {};</script>';
++  const rendered = renderHtml(template, buildGraph([node('live')]));
++  assert.ok(rendered.startsWith('<template><script>const DATA = {};</script></template>'));
++  assert.match(rendered, /"name":"live"/);
 +});
 ````
 
@@ -2610,12 +2691,25 @@ First gate: DISSENT. It independently reproduced two Critical failures (false DA
 loss of editor atomic saves) plus Medium deletion of an unowned temporary. Those findings caused
 round3. Regression tests were confirmed red before correction and green afterward.
 
-Second gate: PASS — no corroborated Medium+ findings. The fresh reviewer read all12 requested
-maintained source/config files in full, with only final code and the18-pass list. It ran20/20tests,
-lint and docs checks successfully. Disposable adversarial experiments covered reversed ancestry,
-dangling branches, multiple script blocks, script-boundary serialization and CRLF prompt rotation.
-The reviewer checked atomic-save, append, retirement-gap and temporary-ownership behavior.
+Second gate: PASS at `b0e949d`, before the final HTML-parser repair. The reviewer read all12
+maintained source/config files, covered all18 passes and ran20tests, lint and docs checks. It
+also exercised reversed ancestry, fragments, multiple scripts, serialization and CRLF rotation.
 Windows execution was not performed. No prior findings or implementation rationale were supplied.
+
+The subsequent final-push CodeQL gate found `js/bad-tag-filter` at `lib/concept-graph.cjs:64`.
+A browser accepts end tags such as `</script foo="bar">`, which the regex did not recognize.
+HTML comments could also introduce false script bodies. Round4 replaced HTML extraction with
+parse5 and confirmed a failing regression before the fix. All22tests now pass. The directed
+follow-up review passed all applicable passes with no corroborated Medium+ finding. It ran22tests
+and lint and exercised malformed closing tags, inert noscript/textarea/template content, AnnexB
+comments, unclosed scripts, mixed-case tags, Unicode/CRLF offsets and preserved trailing code.
+The driver then regenerated indexes and passed docs:check. This was not a third blind gate.
+
+Final blind gate: N/A — the invocation used its maximum two gates before this last source change.
+The audit retains `BLIND-AUDIT-DISSENT` for the late external security dissent rather than claim
+CLEAN for code that lacks a final blind re-audit. The late finding is repaired; this status records
+the bounded independent assurance, not an outstanding confirmed source defect. The final receipt
+must still record passing CodeQL and CI on the delivered commit.
 
 Cross-model gate: not invoked. No universal security or generated-browser correctness claim.
 
@@ -2631,7 +2725,7 @@ bootstrap requirements, not an ungrounded product redesign.
 
 ## 9. Summary
 
-3 iterations · 18 active passes · standard profile · Final0C/0H/0M/0L · Verify: PASS · Status: CLEAN
+4 iterations · 18 active passes · standard profile · Final0C/0H/0M/0L · Verify: PASS · Status: BLIND-AUDIT-DISSENT (late CodeQL dissent repaired; final blind capacity exhausted)
 
 ## 10. Snapshot and rollback
 

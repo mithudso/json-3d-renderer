@@ -693,7 +693,8 @@
         "renderHtml"
       ],
       "depends_on": [
-        "acorn"
+        "acorn",
+        "parse5"
       ],
       "patterns": [],
       "provenance": "[asserted]"
@@ -921,6 +922,8 @@
         "node:url",
         "node:module",
         "node:vm",
+        "./lib/concept-graph.cjs",
+        "./lib/concept-graph.cjs",
         "./lib/concept-graph.cjs",
         "./lib/concept-graph.cjs",
         "./lib/concept-graph.cjs",

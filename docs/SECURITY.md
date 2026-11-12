@@ -25,8 +25,9 @@ pages safe. Missing parent records remain visible as fragments without invalid r
 
 MD5 in the copy verifier is an accidental-drift check, not a cryptographic authenticity guarantee.
 The vendored 3D bundle has no reproducible build manifest here; its full transitive dependency
-security status is unknown. D3 identifies v7.9.0 in its banner. No runtime npm dependencies exist. Acorn 8.19.0 is a pinned MIT development dependency
-used to parse trusted templates without evaluation. `npm audit` checks this dependency, not
+security status is unknown. D3 identifies v7.9.0 in its banner. No runtime npm dependencies exist. Acorn 8.19.0 and parse5 7.3.0 are pinned MIT development dependencies
+used to parse trusted templates without evaluation. parse5 7 retains CommonJS support for Node18;
+the newer ESM-only major is intentionally held. `npm audit` checks these dependencies, including locked entities (BSD-2-Clause), rather than
 the opaque vendored browser libraries.
 
 ## Secrets and incident response

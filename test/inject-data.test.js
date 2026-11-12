@@ -146,3 +146,24 @@ test('parser selects DATA after return-regex and handles quoted script attribute
     assert.equal(vm.runInNewContext(code + '\nDATA').nodes[0].name, 'actual');
   }
 });
+
+test('HTML extraction follows browser end tags and ignores commented scripts', () => {
+  const { buildGraph, renderHtml } = require('./lib/concept-graph.cjs');
+  for (const closing of ['</script foo="bar">', '</script\t\n bar>']) {
+    const template = '<!-- <script>const DATA = {};</script> --><script>const DATA = {};' + closing;
+    const rendered = renderHtml(template, buildGraph([node('browser-boundary')]));
+    assert.match(rendered, /"name":"browser-boundary"/);
+    assert.ok(rendered.startsWith('<!-- <script>const DATA = {};</script> -->'));
+    assert.ok(rendered.endsWith(closing));
+  }
+});
+
+test('bare JavaScript strings and inert template scripts cannot create HTML declarations', () => {
+  const { buildGraph, renderHtml } = require('./lib/concept-graph.cjs');
+  const bare = 'const DATA = {"note":"<script>"};';
+  assert.match(renderHtml(bare, buildGraph([node('bare')])), /"name":"bare"/);
+  const template = '<template><script>const DATA = {};</script></template><script>const DATA = {};</script>';
+  const rendered = renderHtml(template, buildGraph([node('live')]));
+  assert.ok(rendered.startsWith('<template><script>const DATA = {};</script></template>'));
+  assert.match(rendered, /"name":"live"/);
+});
