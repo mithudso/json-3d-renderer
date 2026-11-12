@@ -14,26 +14,36 @@ import { fileURLToPath } from 'node:url';
 const BUNDLE = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'concept-tree-3d.bundle.js');
 const md5 = (file) => createHash('md5').update(readFileSync(file)).digest('hex');
 
-const paths = process.argv.slice(2);
-if (!paths.length || paths.includes('-h') || paths.includes('--help')) {
-  console.error('Usage: node scripts/verify-copy.mjs <path-to-consumer-copy> [more paths...]');
-  process.exit(2);
+function main() {
+  const paths = process.argv.slice(2);
+  if (!paths.length || paths.includes('-h') || paths.includes('--help')) {
+    console.error('Usage: node scripts/verify-copy.mjs <path-to-consumer-copy> [more paths...]');
+    return 2;
+  }
+
+  let want;
+  try {
+    want = md5(BUNDLE);
+  } catch (error) {
+    console.error(`ERROR reference bundle (${error.code || 'READ_FAILED'})`);
+    return 1;
+  }
+  console.log(`bundle   ${want}  ${BUNDLE}`);
+  let bad = 0;
+  for (const p of paths) {
+    let got;
+    try {
+      got = md5(resolve(p));
+    } catch (e) {
+      console.log(`MISSING  ${p} (${e.code || e.message})`);
+      bad++;
+      continue;
+    }
+    const same = got === want;
+    if (!same) bad++;
+    console.log(`${same ? 'OK      ' : 'DIFFERS '} ${got}  ${p}`);
+  }
+  return bad ? 1 : 0;
 }
 
-const want = md5(BUNDLE);
-console.log(`bundle   ${want}  ${BUNDLE}`);
-let bad = 0;
-for (const p of paths) {
-  let got;
-  try {
-    got = md5(resolve(p));
-  } catch (e) {
-    console.log(`MISSING  ${p} (${e.code || e.message})`);
-    bad++;
-    continue;
-  }
-  const same = got === want;
-  if (!same) bad++;
-  console.log(`${same ? 'OK      ' : 'DIFFERS '} ${got}  ${p}`);
-}
-process.exit(bad ? 1 : 0);
+process.exitCode = main();

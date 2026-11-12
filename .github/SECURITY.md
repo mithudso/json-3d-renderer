@@ -28,3 +28,6 @@ page or a malicious vendored dependency):
 3. Include the affected file, how to reproduce, and the impact.
 
 We will acknowledge the report and respond with next steps.
+
+The detailed [threat model](../docs/SECURITY.md) covers local generation, output encoding,
+legacy tooltip constraints and vendor provenance. No response-time SLA is promised.

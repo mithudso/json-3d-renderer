@@ -1,7 +1,6 @@
 # Known issues
 
-_Snapshot: 2026-06-20. Inferred from the actual files and the repo's history during the
-bootstrap pass._
+_Demo history recorded 2026-06-20; maintained tooling re-audited 2026-11-12._
 
 ## 1. `examples/*.html` library paths — **RESOLVED 2026-06-20** (durable fix still pending)
 
@@ -30,7 +29,10 @@ The generated files carry banners referencing scripts that **do not exist here**
 - `scripts/build-concept-tree-mindmap.py` → `tree-mindmap.md`
 - canonical input referenced as `concept-tree/tree.json` (upstream path)
 
-Consequence: **you cannot regenerate the artifacts from this repo.** Hand-edits to generated
+`inject-data.js` now provides a local DATA-replacement converter with explicit paths. It does
+not reproduce the original generators, rebuild the bundle, or update fixed subtitles.
+
+Consequence: **you cannot fully regenerate the original artifacts from this repo.** Hand-edits to generated
 files will not survive a regeneration done elsewhere.
 
 **Fix options:** vendor the generator scripts + the canonical `tree.json` into this repo
@@ -71,7 +73,8 @@ relocated:
   `README.md` was written by the bootstrap as the repo entry point.
 
 If any of these removals were unintentional, restore from git history
-(`git checkout HEAD -- README.md` for the old root README) or regenerate.
+by selecting the intended historical commit, or regenerate from the owning upstream source.
+Do not reset shared checkouts as a repair step.
 
 ## 7. Demos duplicated at root and under `examples/` — **intentional (documented)**
 
@@ -90,3 +93,20 @@ duplication stops being useful, collapse to one location and update the docs + t
 
 `concept-tree-3d.bundle.js` (~1.6 MB) and the demo JSON/HTML are sizable. If history growth
 becomes a problem, consider Git LFS (a commented-out filter is in `.gitattributes`).
+
+
+## 8. Legacy tooltip sinks and incomplete vendor provenance
+
+Generated pages interpolate names into HTML tooltips. They are trusted snapshots, not an
+untrusted-data rendering service. The maintained converter rejects names containing `<` and
+escapes inline script boundaries, but a full tooltip change belongs in the upstream generator.
+`renderHtml` alone expects the validated graph returned by `buildGraph`. Templates remain
+executable trusted code. No browser/WebGL test or upstream bundle build manifest ships here.
+Do not claim comprehensive security auditing of minified transitive dependencies.
+
+## 9. Historical retrieval drift — resolved 2026-11-12
+
+The June documentation predated `package.json`, tests and the local generator; its index also
+referenced missing `GEMINI.md`, `memory.md` and `prompts.md`. The maintained docs now describe
+actual commands. The missing workflow files are restored and deterministic metadata generation
+plus CI drift checks cover every non-ignored file. Semantic indexing remains unconfigured.

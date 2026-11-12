@@ -1,0 +1,31 @@
+{
+  "kind": "local-cli",
+  "totalTools": 5,
+  "tools": [
+    {
+      "name": "inject-data",
+      "path": "inject-data.js",
+      "description": "Create a new local page from explicit tree/template input"
+    },
+    {
+      "name": "verify-copy",
+      "path": "scripts/verify-copy.mjs",
+      "description": "Detect accidental bundle drift"
+    },
+    {
+      "name": "check-repo",
+      "path": "scripts/check-repo.mjs",
+      "description": "Validate JSON and maintained JS syntax"
+    },
+    {
+      "name": "check-doc-indexes",
+      "path": "scripts/check-doc-indexes.mjs",
+      "description": "Check or regenerate deterministic metadata"
+    },
+    {
+      "name": "rotate-workflow-logs",
+      "path": "scripts/rotate-workflow-logs.mjs",
+      "description": "Archive oversized workflow logs safely"
+    }
+  ]
+}

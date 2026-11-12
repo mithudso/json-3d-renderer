@@ -23,7 +23,7 @@ with the concept's description, domain, source count, and expandable sub-concept
 
 ## Quick start
 
-Everything renders client-side and offline — no server, no install, no network.
+The demos render client-side and offline. Node tooling is optional for viewing.
 
 1. Clone the repo.
 2. Open a demo. Because the demos load a rendering library from the repo root, open them
@@ -31,9 +31,9 @@ Everything renders client-side and offline — no server, no install, no network
 
    ```sh
    # from the repo root
-   python3 -m http.server 8000
+   python3 -m http.server 8000 --bind 127.0.0.1
    # then visit, e.g.:
-   #   http://localhost:8000/examples/concept-tree-3d.html
+   #   http://127.0.0.1:8000/examples/concept-tree-3d.html
    ```
 
    The demo pages load their rendering library from the repo root via a `../` relative path
@@ -75,6 +75,8 @@ graph inlined and a `<script>` tag pointing at a rendering library. The 3D page 
 - [docs/COMPONENTS.md](docs/COMPONENTS.md) — the renderers and the data schemas
 - [docs/codebase-overview.md](docs/codebase-overview.md) — file-by-file map
 - [docs/known-issues.md](docs/known-issues.md) — active gaps and workarounds
+- [Installation](docs/INSTALLATION.md) · [Testing](docs/TESTING.md) · [Security](docs/SECURITY.md)
+- [Documentation index](docs/wiki/index.md) — full maintained reference
 - [CONTRIBUTING.md](CONTRIBUTING.md) · [CLAUDE.md](CLAUDE.md) (AI-agent guidance)
 
 ## Consuming
@@ -90,12 +92,33 @@ cp node_modules/@mithudso/json-3d-renderer/concept-tree-3d.bundle.js path/to/ven
 node node_modules/@mithudso/json-3d-renderer/scripts/verify-copy.mjs path/to/vendor/concept-tree-3d.bundle.js
 ```
 
-Or from a checkout of this repo: `node scripts/verify-copy.mjs /Users/mitch.hudson/dev/<consumer>/<path>/concept-tree-3d.bundle.js`
+Or from a checkout of this repo: `node scripts/verify-copy.mjs /path/to/consumer/concept-tree-3d.bundle.js`
 (accepts several paths). Plain md5 works too: `md5 concept-tree-3d.bundle.js path/to/copy.js` (macOS) or `md5sum` (Linux); the sums must be equal.
 `v0.1.0` bundle md5: `10296029343709356d741bfd56446046`.
 
 Known copies (checked 2026-10-20, all identical): `llms-explorer/site/public/vendor/` and `mdb-context-hub/concept-tree/viz/`
-(plus the build output `llms-explorer/site/dist/vendor/`). To release a new bundle, commit it, bump `version` in `package.json`, tag `vX.Y.Z`, `git push origin main --tags`, then update each consumer's pin and copy.
+(plus the build output `llms-explorer/site/dist/vendor/`). For a new bundle, verify its upstream source and provenance, bump the package version, and deliver through a passing PR. Create a release tag only as part of an intended release, then update consumer pins and copies. Package v0.1.1 changes local tooling and documentation; the vendored bundle bytes remain unchanged.
+
+## Local tooling
+
+```sh
+npm ci --ignore-scripts
+npm test
+npm run lint
+npm run docs:check
+```
+
+`lint` checks JSON and maintained JavaScript syntax. There is no application build.
+`npm run docs:update` refreshes retrieval metadata without embeddings. Generate a disposable
+page with explicit local input and a new output path:
+
+```sh
+node inject-data.js /path/to/tree.json /path/to/new-output.html
+```
+
+The optional third argument is a trusted template. Existing output files, malformed records,
+cycles, duplicate ids and names containing `<` are rejected. The generator does not rebuild
+the upstream demos or update their fixed subtitles. See [Development](docs/DEVELOPMENT.md).
 
 ## License
 

@@ -5,25 +5,26 @@ on:
     branches: [main]
   pull_request:
 
-# Minimal CI for a static-artifact repo: validate that every tracked JSON file
-# parses. There is no build or test suite to run today (see docs/DEVELOPMENT.md).
-jobs:
-  validate-json:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
+permissions:
+  contents: read
 
-      - name: Validate all JSON files parse
-        run: |
-          set -euo pipefail
-          fail=0
-          # All tracked .json files except those under node_modules / .git.
-          while IFS= read -r f; do
-            if ! node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "$f" 2>/dev/null; then
-              echo "::error file=$f::invalid JSON"
-              fail=1
-            else
-              echo "ok: $f"
-            fi
-          done < <(git ls-files '*.json')
-          exit $fail
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        node: ['18', '24.22.3']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - run: npm run lint
+      - run: npm run docs:check

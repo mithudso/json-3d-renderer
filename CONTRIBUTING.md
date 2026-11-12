@@ -16,24 +16,24 @@ Reading this first will save you time.
 2. **Don't reformat vendored libraries.** `concept-tree-3d.bundle.js` and `d3.v7.min.js` are
    third-party builds. Update them only from official upstream releases.
 
-3. **No invented tooling in docs.** There is no `package.json`, build, or test suite checked
-   in today. If you add one, document it for real in
-   [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) — don't describe a workflow that doesn't exist.
+3. **Use the actual checks.** Run `npm test`, `npm run lint`, and `npm run docs:check`.
+   There is no application build. See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 ## How to make a change
 
-- **Tweak a demo by hand (one-off):** edit the relevant `examples/*.html`. Be aware it
-  carries a generator banner — your edit will not survive regeneration, so note it in the PR.
+- **Change an original demo:** change its owning upstream generator. Preserve frozen output
+  in maintenance-only PRs. Use explicit synthetic input and a new file for local experiments.
 - **Add a new visualization:** add a self-contained page under `examples/`. Inline its data
   as `const DATA = {...}` and load the appropriate library with a correct relative path
   (`../concept-tree-3d.bundle.js` or `../d3.v7.min.js`).
 - **Update docs:** edit files under `docs/`. If you add/remove/rename files, update
   [docs/codebase-overview.md](docs/codebase-overview.md) and
-  [docs/high_signal_file_index.json](docs/high_signal_file_index.json).
+  [docs/high_signal_file_index.json](docs/high_signal_file_index.json) via `npm run docs:update`.
 
 ## Before you open a PR
 
-- [ ] All JSON files parse (`git ls-files '*.json'` → each must `JSON.parse`). CI checks this.
+- [ ] `npm test`, `npm run lint` and `npm run docs:check` pass.
+- [ ] The request is logged in `prompts.md` and task changes reach remote `main` through a passing PR.
 - [ ] If you moved/renamed files, the `src=`/`href=` references in `examples/*.html` still
       resolve.
 - [ ] You logged the change in [memory.md](memory.md).
